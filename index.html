@@ -14,26 +14,27 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%A1%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
 <style>
 :root {
   --bg: #F2F4F1; --panel: #FFFFFF; --ink: #16201A; --ink-2: #57625B; --ink-3: #66716A; --rule: #D8DED6;
-  --leaf: #2C6647; --leaf-soft: #E1EDE5; --berry: #B0305B; --berry-soft: #F6E2E9; --warn: #8F5600; --warn-soft: #FAEED8;
+  --leaf: #2C6647; --leaf-soft: #E1EDE5; --warn: #8F5600; --warn-soft: #FAEED8;
+  --chip: #EDF1EC; --hot: #B0305B; --hot-ink: #FFFFFF;   /* 맛 노트 태그 · 스페셜 강조 */
   --f-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif;
-  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0F1311; --panel: #161C18; --ink: #E3E9E4; --ink-2: #A0ABA3; --ink-3: #8A958E; --rule: #28312B;
-    --leaf: #82C7A1; --leaf-soft: #1B2D23; --berry: #F27BA0; --berry-soft: #3A1E28; --warn: #E9B65C; --warn-soft: #32260F;
+    --leaf: #82C7A1; --leaf-soft: #1B2D23; --warn: #E9B65C; --warn-soft: #32260F;
+    --chip: #202924; --hot: #E53935; --hot-ink: #FFFFFF;
     color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.55 var(--f-body); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -43,96 +44,98 @@ button { font-family: inherit; }
   max-width: 980px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 18px 48px;
-  display: grid; gap: 18px;
+  padding-block: 20px 56px;
+  display: grid; gap: 20px;
 }
 .top { display: grid; gap: 8px; }
 .mast { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-h1 { margin: 0; font: 700 clamp(24px, 6.6vw, 34px)/1.15 var(--f-body); letter-spacing: -0.02em; text-wrap: balance; }
-.statusline { margin: 0; font: 400 12.5px/1.5 var(--f-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.statusline .live { color: var(--leaf); }
+h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-spacing: -0.02em; text-wrap: balance; }
+.statusline { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.statusline .live { color: var(--leaf); font-weight: 600; }
 .statusline .bad { color: var(--warn); }
-.btn { font: 600 13px/1 var(--f-body); min-height: 40px; padding: 0 15px; border-radius: 999px; border: 1px solid var(--leaf); background: transparent; color: var(--leaf); cursor: pointer; white-space: nowrap; }
+.btn { font: 600 14px/1 var(--f-body); min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--leaf); background: transparent; color: var(--leaf); cursor: pointer; white-space: nowrap; }
 .btn:disabled { opacity: .55; cursor: default; }
-.ghost { font: 500 13px/1 var(--f-body); min-height: 38px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
-.note { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--leaf-soft); color: var(--ink); font-size: 14px; }
+.ghost { font: 500 14px/1 var(--f-body); min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.note { margin: 0; padding: 11px 13px; border-radius: 12px; background: var(--leaf-soft); color: var(--ink); font-size: 14.5px; }
 .note.warn { background: var(--warn-soft); color: var(--warn); }
 .note a { color: inherit; }
 
 .tabs { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; }
 .tabs::-webkit-scrollbar { display: none; }
-.tab { flex: none; font: 600 13px/1 var(--f-body); min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
-.tab b { font: 500 12px var(--f-mono); margin-left: 5px; }
+.tab { flex: none; font: 600 14px/1 var(--f-body); min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.tab b { font-weight: 600; font-variant-numeric: tabular-nums; margin-left: 6px; opacity: .75; }
 .tab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
 
-.list { display: grid; gap: 10px; margin-top: 10px; }
-@media (min-width: 720px) { .list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
-.empty { margin: 0; color: var(--ink-2); font-size: 14px; padding: 8px 0; }
-.coffee { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 14px 6px; display: grid; gap: 4px; min-width: 0; }
-.coffee.is-hot { background: var(--berry-soft); border-color: transparent; }
+.list { display: grid; gap: 12px; margin-top: 12px; }
+@media (min-width: 720px) { .list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; } }
+.empty { margin: 0; color: var(--ink-2); font-size: 15px; padding: 8px 0; }
+
+/* 원두 카드: 로스터리 → 원두 이름(가장 크게) → 농장 → 맛 노트 태그 → 산지·가공 → 가격·주문 */
+.coffee { background: var(--panel); border: 1px solid var(--rule); border-radius: 18px; padding: 18px 18px 4px; display: flex; flex-direction: column; min-width: 0; }
+.coffee.is-hot { border-color: var(--hot); box-shadow: inset 0 0 0 1px var(--hot); }   /* 스페셜: 배경색 대신 테두리 */
 .coffee.is-out { opacity: .72; }
-.c-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }   /* 로스터리 줄과 원산지 줄 사이를 넉넉히 */
-.origin { margin: 0; font: 500 11.5px/1.45 var(--f-mono); letter-spacing: .04em; color: var(--ink-2); min-width: 0; }
-.origin .country { color: var(--leaf); font-family: var(--f-body); font-weight: 600; letter-spacing: 0; }
-.flags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; flex: none; max-width: 60%; }
-.flag { font: 600 11px/1 var(--f-body); padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
-.flag.special { background: var(--ink); color: var(--panel); }
-@media (prefers-color-scheme: dark) { .flag.special { background: #E53935; color: #FFFFFF; } }
-.flag.new { background: var(--berry); color: var(--panel); }
+.c-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.flags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; flex: none; max-width: 60%; }
+.flag { font: 700 12px/1 var(--f-body); padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
+.flag.special { background: var(--hot); color: var(--hot-ink); }
+.flag.new { background: var(--leaf-soft); color: var(--leaf); }
 .flag.out { background: var(--warn-soft); color: var(--warn); }
-.producer { margin: 2px 0 0; font: 700 21px/1.15 var(--f-display); letter-spacing: -0.01em; overflow-wrap: anywhere; }
-.lot { margin: 0; font-size: 13.5px; color: var(--ink-2); }
-.notes { margin: 2px 0 0; font-size: 14.5px; }
-.notes i { font-style: normal; color: var(--ink-3); margin: 0 .4em; }
-.c-buy { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin-top: 8px; }
-.price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; font-family: var(--f-mono); font-variant-numeric: tabular-nums; min-width: 0; }
-.price b { font-weight: 500; font-size: 17px; }
-.price .size { font-size: 12.5px; color: var(--ink-2); }
-.order { display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; }
-details.more { margin-top: 6px; border-top: 1px dashed var(--rule); }
-details.more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; min-height: 40px; font-size: 13px; color: var(--ink-2); }
+.producer { margin: 18px 0 0; font: 700 25px/1.18 var(--f-display); letter-spacing: -0.015em; overflow-wrap: anywhere; text-wrap: balance; }
+.farm { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); overflow-wrap: anywhere; }
+.notes { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.notes li { font: 500 14.5px/1 var(--f-body); padding: 8px 12px; border-radius: 999px; background: var(--chip); color: var(--ink); }
+.facts { margin: 16px 0 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; gap: 6px 14px; font-size: 15px; line-height: 1.45; }
+.facts div, .spec div { display: contents; }
+.facts dt, .spec dt { color: var(--ink-2); font-size: 13.5px; font-weight: 500; }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.facts .country { font-weight: 600; }
+.c-buy { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; flex-wrap: wrap; margin-top: 20px; }
+.price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; font-variant-numeric: tabular-nums; min-width: 0; }
+.price b { font: 700 21px/1.1 var(--f-body); letter-spacing: -0.01em; }
+.price .size { font-size: 14px; color: var(--ink-2); }
+.order { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 600; font-size: 15px; white-space: nowrap; }
+details.more { margin-top: 16px; border-top: 1px solid var(--rule); }
+details.more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; min-height: 48px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
 details.more > summary::-webkit-details-marker { display: none; }
 details.more > summary::after { content: "▾"; font-size: 12px; }
 details.more[open] > summary::after { content: "▴"; }
-.more-body { display: grid; gap: 12px; padding: 2px 0 10px; }
-.spec { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 14px; font-size: 13px; }
-.spec div { display: contents; }
-.spec dt { color: var(--ink-2); }
-.spec dd { margin: 0; font-family: var(--f-mono); font-size: 12.5px; overflow-wrap: anywhere; }
-.txt { display: grid; gap: 3px; min-width: 0; }
-.txt h3 { margin: 0; font: 600 12.5px/1.4 var(--f-body); color: var(--ink-2); }
-.txt p { margin: 0; font-size: 14px; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
-.tr-note { margin: 0; font-size: 12px; color: var(--ink-3); }
-details.orig > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; min-height: 32px; font-size: 12.5px; color: var(--ink-2); }
+.more-body { display: grid; gap: 18px; padding: 2px 0 18px; }
+.spec { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; gap: 8px 16px; font-size: 15px; line-height: 1.45; }
+.spec dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.txt { display: grid; gap: 6px; min-width: 0; }
+.txt h3 { margin: 0; font: 600 14px/1.4 var(--f-body); color: var(--ink); }
+.txt p { margin: 0; font-size: 15.5px; line-height: 1.75; word-break: keep-all; overflow-wrap: anywhere; }
+.tr-note { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+details.orig > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; min-height: 40px; font-size: 14px; color: var(--ink-2); }
 details.orig > summary::-webkit-details-marker { display: none; }
 details.orig > summary::after { content: "▸"; font-size: 11px; }
 details.orig[open] > summary::after { content: "▾"; }
-.orig-body { display: grid; gap: 8px; padding: 4px 0 2px; }
-.orig-body p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); overflow-wrap: anywhere; }
-.orig-body b { display: block; font: 500 11px/1.4 var(--f-mono); letter-spacing: .06em; color: var(--ink-3); }
+.orig-body { display: grid; gap: 14px; padding: 4px 0 2px; }
+.orig-body p { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--ink-2); overflow-wrap: anywhere; }
+.orig-body b { display: block; margin-bottom: 2px; font: 600 13.5px/1.4 var(--f-body); color: var(--ink); }
 
-.memo { border-top: 1px solid var(--rule); padding-top: 14px; color: var(--ink-2); font-size: 13.5px; }
-.memo h2 { margin: 0; font-size: 14px; color: var(--ink); }
-.memo ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.memo { border-top: 1px solid var(--rule); padding-top: 16px; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+.memo h2 { margin: 0; font-size: 15px; color: var(--ink); }
+.memo ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
 .memo b { color: var(--ink); font-weight: 600; }
 @media (min-width: 720px) {
-  .wrap { padding-block: 28px 64px; gap: 22px; }
-  .coffee { padding: 16px 16px 8px; }
-  .producer { font-size: 23px; }
+  .wrap { padding-block: 32px 72px; gap: 24px; }
+  .coffee { padding: 20px 20px 6px; }
+  .producer { font-size: 27px; }
 }
-.vbadge { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
-.vlogo { flex: none; height: 24px; min-width: 24px; padding: 0 7px; border-radius: 7px; background: #FFFFFF; border: 1px solid rgba(22, 32, 26, .12); display: inline-grid; place-items: center; overflow: hidden; }
-.vlogo img { display: block; height: 12px; width: auto; max-width: 64px; }
-.vlogo.icon { padding: 0; width: 24px; }
-.vlogo.icon img { width: 24px; height: 24px; max-width: none; object-fit: cover; }
-.vlogo .mono { font: 800 10.5px/1 var(--f-display); letter-spacing: .06em; color: #16201A; }
-.vname { font: 600 12.5px/1.2 var(--f-body); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbadge { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.vlogo { flex: none; height: 26px; min-width: 26px; padding: 0 8px; border-radius: 8px; background: #FFFFFF; border: 1px solid rgba(22, 32, 26, .12); display: inline-grid; place-items: center; overflow: hidden; }
+.vlogo img { display: block; height: 13px; width: auto; max-width: 70px; }
+.vlogo.icon { padding: 0; width: 26px; }
+.vlogo.icon img { width: 26px; height: 26px; max-width: none; object-fit: cover; }
+.vlogo .mono { font: 800 11px/1 var(--f-display); letter-spacing: .06em; color: #16201A; }
+.vname { font: 600 14px/1.2 var(--f-body); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .vtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.vtab { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px/1 var(--f-body); min-height: 34px; padding: 0 11px 0 6px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
-.vtab .vlogo { height: 22px; min-width: 22px; border-radius: 999px; }
-.vtab .vlogo.icon { width: 22px; }
-.vtab .vlogo.icon img { width: 22px; height: 22px; }
-.vtab.all { padding: 0 12px; }
+.vtab { display: inline-flex; align-items: center; gap: 6px; font: 500 13.5px/1 var(--f-body); min-height: 36px; padding: 0 12px 0 6px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.vtab .vlogo { height: 24px; min-width: 24px; border-radius: 999px; }
+.vtab .vlogo.icon { width: 24px; }
+.vtab .vlogo.icon img { width: 24px; height: 24px; }
+.vtab.all { padding: 0 13px; }
 .vtab[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; }
 .coffee.focus { outline: 2px solid var(--leaf); outline-offset: 2px; }
 .coffee.stale { opacity: .6; }
@@ -141,13 +144,13 @@ details.orig[open] > summary::after { content: "▾"; }
 .share-btn.done { border-color: var(--leaf); color: var(--leaf); }
 /* 누른 버튼 바로 위 말풍선 — 버튼 왼쪽 끝에 맞춰 화면 밖으로 안 나가게 */
 .tip { position: absolute; bottom: calc(100% + 9px); left: 0; transform: translateY(5px); padding: 8px 11px; border-radius: 10px; background: var(--ink); color: var(--panel);
-  font: 600 12.5px/1 var(--f-body); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .16s ease, transform .16s ease; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); z-index: 5; }
-.tip::after { content: ""; position: absolute; top: 100%; left: 28px; border: 6px solid transparent; border-top-color: var(--ink); }
+  font: 600 13px/1 var(--f-body); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .16s ease, transform .16s ease; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); z-index: 5; }
+.tip::after { content: ""; position: absolute; top: 100%; left: 30px; border: 6px solid transparent; border-top-color: var(--ink); }
 .tip.on { opacity: 1; transform: none; }
 .tip.warn { background: var(--warn); }
 .tip.warn::after { border-top-color: var(--warn); }
 .copybox { display: grid; gap: 8px; }
-.copybox textarea { width: 100%; min-height: 150px; font: 400 14px/1.5 var(--f-body); padding: 10px; border-radius: 8px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); resize: vertical; }
+.copybox textarea { width: 100%; min-height: 150px; font: 400 15px/1.55 var(--f-body); padding: 10px; border-radius: 10px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); resize: vertical; }
 .copybox .ghost { justify-self: start; }
 @media (prefers-reduced-motion: reduce) { .tip, .share-btn { transition: none; } }
 </style>
@@ -250,7 +253,7 @@ details.orig[open] > summary::after { content: "▾"; }
     const missing = (t.procEn && !t.procKo) || (t.descEn && !t.descKo);
     const orig = (t.procKo || t.descKo) && (t.procEn || t.descEn)
       ? `<details class="orig" data-o="${esc(it.key)}"${S.orig.has(it.key) ? ' open' : ''}><summary>원문 보기</summary><div class="orig-body">`
-        + (t.procEn ? `<p><b>PROCESSING</b>${esc(t.procEn)}</p>` : '') + (t.descEn ? `<p><b>DESCRIPTION</b>${esc(t.descEn)}</p>` : '') + '</div></details>'
+        + (t.procEn ? `<p><b>가공 과정</b>${esc(t.procEn)}</p>` : '') + (t.descEn ? `<p><b>제품 설명</b>${esc(t.descEn)}</p>` : '') + '</div></details>'
       : '';
     return blocks + (missing ? '<p class="tr-note">번역이 아직 없어 원문으로 보여드려요.</p>' : '') + orig;
   }
@@ -261,19 +264,20 @@ details.orig[open] > summary::after { content: "▾"; }
     if (it.isNew) flags.push('<span class="flag new">NEW</span>');
     if (!it.available) flags.push('<span class="flag out">품절</span>');
     const s = smallest(it);
-    const allSizes = (it.sizes || []).map((x) => `${x.label} ${money(x.price, it.currency)}${x.available ? '' : ' (품절)'}`).join(' · ');
-    const spec = [['품종', it.variety], ['가공', it.process], ['지역', it.region], ['고도', it.altitude], ['수확', it.harvest], ['용량', allSizes]].filter((x) => x[1]);
-    const sub = [it.farm, it.variety, it.process].filter(Boolean).join(' · ');
+    const sizes = (it.sizes || []).map((x) => esc(`${x.label} ${money(x.price, it.currency)}${x.available ? '' : ' (품절)'}`)).join('<br>');
+    const spec = [['품종', esc(it.variety)], ['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
+    const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(it.region || '')].filter(Boolean).join(' ');
+    const facts = [['산지', place], ['가공', esc(it.process)]].filter((x) => x[1]);
     const k = esc(it.key);
     return `<article class="coffee${it.special ? ' is-hot' : ''}${it.available ? '' : ' is-out'}${it.stale ? ' stale' : ''}" data-key="${k}">
       <div class="c-top">
         <span class="vbadge">${logoHTML(v)}<span class="vname">${esc(v.name)}</span></span>
         ${flags.length ? `<div class="flags">${flags.join('')}</div>` : ''}
       </div>
-      <p class="origin"><span class="country">${esc(it.countryKo || '')}</span>${it.region ? ` · ${esc(it.region)}` : ''}</p>
       <h2 class="producer">${esc(it.producer)}</h2>
-      ${sub ? `<p class="lot">${esc(sub)}</p>` : ''}
-      ${it.notes && it.notes.length ? `<p class="notes">${it.notes.map(esc).join('<i aria-hidden="true">·</i>')}</p>` : ''}
+      ${it.farm ? `<p class="farm">${esc(it.farm)}</p>` : ''}
+      ${it.notes && it.notes.length ? `<ul class="notes" aria-label="맛 노트">${it.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+      ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
       <div class="c-buy">
         <div class="price">${s ? `<b>${esc(money(s.price, it.currency))}</b><span class="size">${esc(s.label)}</span>` : ''}</div>
         <a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a>
@@ -281,7 +285,7 @@ details.orig[open] > summary::after { content: "▾"; }
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
         <summary>상세정보</summary>
         <div class="more-body">
-          ${spec.length ? `<dl class="spec">${spec.map(([a, x]) => `<div><dt>${a}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>` : ''}
+          ${spec.length ? `<dl class="spec">${spec.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
           ${textBlocks(it)}
           <div class="share"><button type="button" class="ghost share-btn" data-share="${k}">공유하기</button></div>
         </div>
