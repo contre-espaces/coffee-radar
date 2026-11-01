@@ -179,11 +179,10 @@ details.orig[open] > summary::after { content: "▾"; }
     <ul>
       <li><b>스페셜</b>: SEY 기준 125g 소포장이거나 250g 환산 ₩48,000 이상인 원두예요. 애드온 후보로 보면 돼요.</li>
       <li><b>NEW</b>: 올라온 지 7일이 안 된 원두예요.</li>
-      <li><b>공유하기</b>: 상세정보 맨 아래 '공유하기'를 누르면 휴대폰에서는 공유창이 떠서 카톡 단톡방을 바로 고를 수 있어요. PC에서는 공유 문구가 복사돼요.</li>
       <li><b>가공 과정·제품 설명</b>: SEY 원문을 구글 번역으로 옮긴 거예요. 표현이 어색하면 상세정보의 '원문 보기'로 확인하세요.</li>
       <li>애드온은 SEY 주문 때 ADDON 코드를 넣으면 배송비 없이 다음 구독분과 함께 와요 (SEY FAQ).</li>
       <li>주문분은 화요일에 로스팅해서 수요일에 출고돼요 (상품 페이지).</li>
-      <li>열 때마다 <a href="https://www.seycoffee.com/collections/coffee" target="_blank" rel="noopener">SEY COFFEE 사이트</a>의 최신 정보를 받아와요. 가격은 한국 기준(원화)이에요.</li>
+      <li>5분마다 <a href="https://www.seycoffee.com/collections/coffee" target="_blank" rel="noopener">SEY COFFEE 사이트</a>에서 최신 정보를 받아와요. 가격은 한국 기준(원화)이에요.</li>
     </ul>
   </footer>
 </main>
@@ -235,7 +234,7 @@ details.orig[open] > summary::after { content: "▾"; }
       const when = d.updatedAt ? stamp(d.updatedAt) + ' 기준' : '';
       const down = vendors().filter((v) => !v.ok).map((v) => v.short);
       const tail = S.loading ? ' · 새로 불러오는 중…' : S.error ? ' · <span class="bad">새로 불러오기 실패</span>' : '';
-      el.innerHTML = (S.fromCache ? `저장된 정보 · ${esc(when)}` : `<span class="live">● 실시간</span> · 판매 중 ${d.items.length}종 · ${esc(when)}`)
+      el.innerHTML = (S.fromCache ? `저장된 정보 · ${esc(when)}` : `<span class="live">● 최신</span> · 판매 중 ${d.items.length}종 · ${esc(when)}`)
         + (down.length ? ` · <span class="bad">${esc(down.join('·'))} 이전 정보</span>` : '') + tail;
     }
     $('#reload').disabled = S.loading;
@@ -348,8 +347,9 @@ details.orig[open] > summary::after { content: "▾"; }
       document.head.appendChild(s);
     });
   }
-  function carryOver(d, prev) {   // 불러오지 못한 업체는 직전 목록을 흐리게 유지
-    const down = new Set((d.vendors || []).filter((v) => !v.ok).map((v) => v.id));
+  function carryOver(d, prev) {   // 서버도 원두를 못 준 업체는 이 기기의 직전 목록을 흐리게 유지
+    const has = new Set((d.items || []).map((x) => x.vendor));
+    const down = new Set((d.vendors || []).filter((v) => !v.ok && !has.has(v.id)).map((v) => v.id));
     if (!down.size || !prev || !Array.isArray(prev.items)) return d;
     const keep = prev.items.filter((x) => down.has(x.vendor)).map((x) => Object.assign({}, x, { stale: true }));
     return Object.assign({}, d, { items: d.items.concat(keep) });
