@@ -97,9 +97,13 @@ h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-sp
 .facts dd { margin: 0; overflow-wrap: anywhere; }
 .facts .country { font-weight: 600; }
 .c-buy { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; flex-wrap: wrap; margin-top: 20px; }
-.price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; font-variant-numeric: tabular-nums; min-width: 0; }
+.price { display: flex; flex-direction: column; gap: 3px; font-variant-numeric: tabular-nums; min-width: 0; }
+.p-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; }
 .price b { font: 700 21px/1.1 var(--f-body); letter-spacing: -0.01em; }
 .price .size, .price .orig { font-size: 14px; color: var(--ink-2); }
+.price .unit { font-size: 13.5px; font-weight: 500; color: var(--ink-2); }   /* 100g당 가격: 용량이 달라도 비교되게 */
+.sortbar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+.sortbar select { font: 500 14px/1.2 var(--f-body); min-height: 36px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
 .order { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 600; font-size: 15px; white-space: nowrap; }
 details.more { margin-top: 16px; border-top: 1px solid var(--rule); }
 details.more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; min-height: 48px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
@@ -137,7 +141,11 @@ details.orig[open] > summary::after { content: "▾"; }
 .vlogo.icon img { width: 26px; height: 26px; max-width: none; object-fit: cover; }
 .vlogo .mono { font: 800 11px/1 var(--f-display); letter-spacing: .06em; color: #16201A; }
 .vname { font: 600 14px/1.2 var(--f-body); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.vtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.vtabs { display: flex; flex-wrap: nowrap; gap: 6px; margin-top: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }   /* 휴대폰: 업체 칩은 옆으로 넘기는 한 줄 */
+.vtabs::-webkit-scrollbar { display: none; }
+.vtab { flex: none; }
+.wrap > section { min-width: 0; }   /* 한 줄 칩이 화면보다 길어도 페이지는 넓어지지 않게 */
+@media (min-width: 720px) { .vtabs { flex-wrap: wrap; overflow: visible; } }
 .vtab { display: inline-flex; align-items: center; gap: 6px; font: 500 13.5px/1 var(--f-body); min-height: 36px; padding: 0 12px 0 6px; border-radius: 999px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
 .vtab .vlogo { height: 24px; min-width: 24px; border-radius: 999px; }
 .vtab .vlogo.icon { width: 24px; }
@@ -180,6 +188,7 @@ details.orig[open] > summary::after { content: "▾"; }
       <button type="button" class="tab" data-filter="new" aria-pressed="false">NEW<b id="cntNew">–</b></button>
     </div>
     <div class="vtabs" id="vtabs" role="group" aria-label="업체 필터" hidden></div>
+    <div class="sortbar"><label for="sort">정렬</label><select id="sort"><option value="new">최신순</option><option value="cheap">100g당 싼 순</option><option value="pricey">100g당 비싼 순</option></select></div>
     <div id="list" class="list"><p class="empty">불러오는 중…</p></div>
   </section>
 
@@ -190,6 +199,7 @@ details.orig[open] > summary::after { content: "▾"; }
       <li><b>NEW</b>: 올라온 지 7일이 안 된 원두예요.</li>
       <li><b>가공 과정·제품 설명</b>: 원문을 구글 번역으로 옮긴 거예요. 표현이 어색하면 상세정보의 '원문 보기'로 확인하세요.</li>
       <li>5분마다 각 사이트에서 최신 정보를 받아와요. 가격은 한국에서 주문할 때 기준이에요. 외화로 파는 곳은 매일 받는 환율로 바꾼 원화(≈₩)를 먼저 보여드리고, 현지 가격은 옆에 적어 둬요.</li>
+      <li><b>100g당 가격</b>: 용량은 g으로 맞춰 적고(8oz → 227g), 카드에는 250g에 가장 가까운 용량의 가격과 100g당 가격을 보여드려요. 정렬에서 100g당 싼 순·비싼 순으로 볼 수 있어요.</li>
     </ul>
   </footer>
 </main>
@@ -206,10 +216,12 @@ details.orig[open] > summary::after { content: "▾"; }
     get(k) { try { const v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
   };
-  const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all',
+  const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all', sort: 'new',
     open: new Set(), orig: new Set(), focus: null, focusDone: false };
   const f0 = store.get('filter');
   if (f0 === 'special' || f0 === 'new') S.filter = f0;
+  const s0 = store.get('sort');
+  if (s0 === 'cheap' || s0 === 'pricey') S.sort = s0;
   try { S.focus = new URLSearchParams(location.search).get('item'); } catch (e) { S.focus = null; }
   if (S.focus) { S.filter = 'all'; S.open.add(S.focus); }
 
@@ -223,12 +235,25 @@ details.orig[open] > summary::after { content: "▾"; }
   const sizeLine = (x, cur) => [x.label, mainPrice(x, cur)].filter(Boolean).join(' ') + (origPrice(x, cur) ? ` (${origPrice(x, cur)})` : '') + (x.available ? '' : ' (품절)');
   function gramsOf(label) {
     const s = String(label || '').toLowerCase();
-    let m = s.match(/([\d.]+)\s*kg/); if (m) return +m[1] * 1000;
-    m = s.match(/([\d.]+)\s*g\b/); if (m) return +m[1];
-    m = s.match(/([\d.]+)\s*lbs?\b/); if (m) return +m[1] * 453.592;
+    let m = s.match(/([\d.]+)\s*(?:kgs?|kilo(?:gram)?s?)\b/); if (m) return +m[1] * 1000;
+    m = s.match(/([\d.]+)\s*(?:g|gr|grams?)\b/); if (m) return +m[1];
+    m = s.match(/([\d.]+)\s*(?:lbs?|pounds?)\b/); if (m) return Math.round(+m[1] * 453.592);
+    m = s.match(/([\d.]+)\s*(?:oz|ounces?)\b/); if (m) return Math.round(+m[1] * 28.3495);
     return null;
   }
-  const smallest = (it) => (it.sizes || []).map((s) => Object.assign({ g: gramsOf(s.label) }, s)).filter((s) => s.g).sort((a, b) => a.g - b.g)[0] || (it.sizes || [])[0] || null;
+  // 카드 대표 가격: 서버가 정한 비교 기준 용량(250g에 가장 가까운 것) — 예전 저장본엔 없으면 같은 규칙으로
+  function basisOf(it) {
+    const ss = it.sizes || [];
+    if (it.unit && ss[it.unit.i]) return ss[it.unit.i];
+    return ss.map((s) => Object.assign({ g: gramsOf(s.label) }, s)).filter((s) => s.g && s.price > 0)
+      .sort((a, b) => Math.abs(a.g - 250) - Math.abs(b.g - 250) || a.g - b.g)[0] || ss[0] || null;
+  }
+  const unitKrw = (it) => (it.unit && it.unit.krw > 0 ? it.unit.krw : null);   // 정렬용 (원화 또는 원화 환산)
+  const unitText = (it) => {
+    const u = it.unit;
+    if (!u) return '';
+    return '100g당 ' + (it.currency === 'KRW' ? money(u.krw, 'KRW') : u.krw > 0 ? '≈₩' + num(u.krw, 0) : money(u.price, it.currency));
+  };
   const vendors = () => (S.data && S.data.vendors) || [];
   const vendorOf = (id) => vendors().find((v) => v.id === id) || { id, short: id.toUpperCase(), name: id };
   const nameOf = (it) => [it.producer, it.farm].filter(Boolean).join(' · ');
@@ -276,7 +301,7 @@ details.orig[open] > summary::after { content: "▾"; }
     if (it.special) flags.push('<span class="flag special">스페셜</span>');
     if (it.isNew) flags.push('<span class="flag new">NEW</span>');
     if (!it.available) flags.push('<span class="flag out">품절</span>');
-    const s = smallest(it);
+    const s = basisOf(it), unit = unitText(it);
     const sizes = (it.sizes || []).map((x) => esc(sizeLine(x, it.currency))).join('<br>');
     const spec = [['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
     const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(it.region || '')].filter(Boolean).join(' ');
@@ -294,7 +319,7 @@ details.orig[open] > summary::after { content: "▾"; }
       ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
       </div>
       <div class="c-buy">
-        <div class="price">${s ? `<b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}` : ''}</div>
+        <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
         <a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
@@ -326,10 +351,17 @@ details.orig[open] > summary::after { content: "▾"; }
     const sp = pool.filter((it) => it.special), nw = pool.filter((it) => it.isNew);
     $('#cntAll').textContent = pool.length; $('#cntSpecial').textContent = sp.length; $('#cntNew').textContent = nw.length;
     document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.filter === S.filter)));
-    const list = S.filter === 'special' ? sp : S.filter === 'new' ? nw : pool;
+    const list = sorted(S.filter === 'special' ? sp : S.filter === 'new' ? nw : pool);
+    $('#sort').value = S.sort;
     if (!pool.length) { box.innerHTML = '<p class="empty">지금 판매 중인 원두가 없어요.</p>'; return; }
     if (!list.length) { box.innerHTML = `<p class="empty">${S.filter === 'special' ? '지금은 스페셜 원두가 없어요.' : '최근 7일 안에 올라온 원두가 없어요.'}</p>`; return; }
     box.innerHTML = list.map(cardHTML).join('');
+  }
+  function sorted(list) {   // 최신순(서버 순서) · 100g당 싼 순 · 비싼 순 — 100g당 가격을 모르는 원두는 맨 뒤
+    if (S.sort !== 'cheap' && S.sort !== 'pricey') return list;
+    const has = list.filter((it) => unitKrw(it) != null), none = list.filter((it) => unitKrw(it) == null);
+    has.sort((a, b) => (S.sort === 'cheap' ? unitKrw(a) - unitKrw(b) : unitKrw(b) - unitKrw(a)));
+    return has.concat(none);
   }
   function applyFocus() {
     if (!S.focus || S.focusDone || !S.data || S.fromCache) return;
@@ -388,13 +420,13 @@ details.orig[open] > summary::after { content: "▾"; }
 
   // ---------- 공유하기: 휴대폰은 공유창(카톡 단톡방 바로 선택), PC는 문구 복사 ----------
   function shareText(it) {
-    const v = vendorOf(it.vendor), s = smallest(it);
+    const v = vendorOf(it.vendor), s = basisOf(it), unit = unitText(it);
     const addon = v.addon != null ? v.addon : v.id === 'sey';   // 애드온은 SEY 주문 때만
     const header = it.special ? (addon ? `☕ ${v.short} 스페셜 — 애드온 할까요?` : `☕ ${v.short} 스페셜 원두`) : `☕ ${v.short} 원두`;
     const title = nameOf(it) + (it.countryKo ? ` (${it.countryKo})` : '');
     const info = [it.variety, it.process].filter(Boolean).join(' · ');
     const top = [header, title, info, (it.notes || []).join('·')].filter(Boolean).join('\n');
-    const price = s ? sizeLine(Object.assign({}, s, { available: true }), it.currency) : '';
+    const price = (s ? sizeLine(Object.assign({}, s, { available: true }), it.currency) : '') + (unit ? (s ? '\n' : '') + unit : '');
     return [top, price, it.url].filter(Boolean).join('\n\n');
   }
   const touch = () => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
@@ -453,6 +485,7 @@ details.orig[open] > summary::after { content: "▾"; }
     else if (t.dataset.closeCopy) { const box = t.closest('.copybox'); if (box) box.remove(); }
     else if (t.dataset.share) { const it = find(t.dataset.share); if (it) shareIt(it, t); }
   });
+  $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; store.set('sort', S.sort); render(); });
   document.addEventListener('error', (e) => {   // 로고 이미지가 깨지면 약칭 배지로
     const im = e.target;
     if (!im || !im.classList || !im.classList.contains('vimg')) return;
