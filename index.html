@@ -265,9 +265,9 @@ details.orig[open] > summary::after { content: "▾"; }
     if (!it.available) flags.push('<span class="flag out">품절</span>');
     const s = smallest(it);
     const sizes = (it.sizes || []).map((x) => esc(`${x.label} ${money(x.price, it.currency)}${x.available ? '' : ' (품절)'}`)).join('<br>');
-    const spec = [['품종', esc(it.variety)], ['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
+    const spec = [['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
     const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(it.region || '')].filter(Boolean).join(' ');
-    const facts = [['산지', place], ['가공', esc(it.process)]].filter((x) => x[1]);
+    const facts = [['산지', place], ['품종', esc(it.variety)], ['가공', esc(it.process)]].filter((x) => x[1]);
     const k = esc(it.key);
     return `<article class="coffee${it.special ? ' is-hot' : ''}${it.available ? '' : ' is-out'}${it.stale ? ' stale' : ''}" data-key="${k}">
       <div class="c-top">
