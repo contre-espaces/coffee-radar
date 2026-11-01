@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>신상 원두 레이더 📡</title>
-<meta name="description" content="로스터리 새 원두와 스페셜(애드온 후보)을 한눈에 — 가공 과정·제품 설명 한글 번역, 카카오톡 공유">
+<meta name="description" content="로스터리 새 원두와 스페셜(애드온 후보)을 한눈에 — 가공 과정·제품 설명 한글 번역, 카톡 공유">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="신상 원두 레이더">
 <meta property="og:title" content="신상 원두 레이더 📡">
@@ -71,7 +71,7 @@ h1 { margin: 0; font: 700 clamp(24px, 6.6vw, 34px)/1.15 var(--f-body); letter-sp
 .coffee { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 14px 6px; display: grid; gap: 4px; min-width: 0; }
 .coffee.is-hot { background: var(--berry-soft); border-color: transparent; }
 .coffee.is-out { opacity: .72; }
-.c-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.c-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }   /* 로스터리 줄과 원산지 줄 사이를 넉넉히 */
 .origin { margin: 0; font: 500 11.5px/1.45 var(--f-mono); letter-spacing: .04em; color: var(--ink-2); min-width: 0; }
 .origin .country { color: var(--leaf); font-family: var(--f-body); font-weight: 600; letter-spacing: 0; }
 .flags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; flex: none; max-width: 60%; }
@@ -137,30 +137,20 @@ details.orig[open] > summary::after { content: "▾"; }
 .vtab[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; }
 .coffee.focus { outline: 2px solid var(--leaf); outline-offset: 2px; }
 .coffee.stale { opacity: .6; }
-.share { display: flex; gap: 14px; padding: 14px 0 2px; border-top: 1px dashed var(--rule); }
-.sbtn { position: relative; display: grid; justify-items: center; gap: 7px; min-width: 60px; padding: 0; border: 0; background: none; color: var(--ink-2); font: 500 12px/1.2 var(--f-body); cursor: pointer; }
-.sbtn .ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; transition: transform .12s ease, background-color .2s ease; }
-.sbtn:active .ic { transform: scale(.93); }
-.sbtn.kakao .ic img { width: 44px; height: 44px; display: block; border-radius: 12px; }
-.sbtn.copy .ic { background: var(--bg); border: 1px solid var(--rule); color: var(--ink); }
-.sbtn .ic svg { width: 20px; height: 20px; }
-.sbtn .ok { display: none; }
-.sbtn.done .ok { display: block; }
-.sbtn.done .cp { display: none; }
-.sbtn.done .ic { background: var(--leaf); border-color: var(--leaf); color: var(--panel); }
-.tip { position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translate(-50%, 5px); padding: 8px 11px; border-radius: 10px; background: var(--ink); color: var(--panel);
+.share { display: flex; }
+.share-btn { position: relative; transition: border-color .2s ease, color .2s ease; }
+.share-btn.done { border-color: var(--leaf); color: var(--leaf); }
+/* 누른 버튼 바로 위 말풍선 — 버튼 왼쪽 끝에 맞춰 화면 밖으로 안 나가게 */
+.tip { position: absolute; bottom: calc(100% + 9px); left: 0; transform: translateY(5px); padding: 8px 11px; border-radius: 10px; background: var(--ink); color: var(--panel);
   font: 600 12.5px/1 var(--f-body); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .16s ease, transform .16s ease; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); z-index: 5; }
-.tip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--ink); }
-.share .sbtn:first-child .tip { left: -2px; transform: translate(0, 5px); }
-.share .sbtn:first-child .tip::after { left: 30px; }
-.tip.on { opacity: 1; transform: translate(-50%, 0); }
-.share .sbtn:first-child .tip.on { transform: translate(0, 0); }
+.tip::after { content: ""; position: absolute; top: 100%; left: 28px; border: 6px solid transparent; border-top-color: var(--ink); }
+.tip.on { opacity: 1; transform: none; }
 .tip.warn { background: var(--warn); }
 .tip.warn::after { border-top-color: var(--warn); }
 .copybox { display: grid; gap: 8px; }
 .copybox textarea { width: 100%; min-height: 150px; font: 400 14px/1.5 var(--f-body); padding: 10px; border-radius: 8px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); resize: vertical; }
 .copybox .ghost { justify-self: start; }
-@media (prefers-reduced-motion: reduce) { .tip, .sbtn .ic { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tip, .share-btn { transition: none; } }
 </style>
 </head>
 <body>
@@ -189,7 +179,7 @@ details.orig[open] > summary::after { content: "▾"; }
     <ul>
       <li><b>스페셜</b>: SEY 기준 125g 소포장이거나 250g 환산 ₩48,000 이상인 원두예요. 애드온 후보로 보면 돼요.</li>
       <li><b>NEW</b>: 올라온 지 7일이 안 된 원두예요.</li>
-      <li><b>카카오톡 공유</b>: 상세정보 맨 아래 카카오톡 아이콘을 누르면 단톡방을 골라 원두 카드를 보낼 수 있어요. 카드를 누르면 이 페이지의 해당 원두로 와요.</li>
+      <li><b>공유하기</b>: 상세정보 맨 아래 '공유하기'를 누르면 휴대폰에서는 공유창이 떠서 카톡 단톡방을 바로 고를 수 있어요. PC에서는 공유 문구가 복사돼요.</li>
       <li><b>가공 과정·제품 설명</b>: SEY 원문을 구글 번역으로 옮긴 거예요. 표현이 어색하면 상세정보의 '원문 보기'로 확인하세요.</li>
       <li>애드온은 SEY 주문 때 ADDON 코드를 넣으면 배송비 없이 다음 구독분과 함께 와요 (SEY FAQ).</li>
       <li>주문분은 화요일에 로스팅해서 수요일에 출고돼요 (상품 페이지).</li>
@@ -202,14 +192,7 @@ details.orig[open] > summary::after { content: "▾"; }
 (() => {
   'use strict';
   const API = 'https://script.google.com/macros/s/AKfycbyltkPYpuBj-ws6yuGGHawNtM4B5RT2jitwXkcC-qxO00G8c7a8uJSM-EY5P12B0J1Y/exec?api=lineup';
-  const KAKAO_SDK = { src: 'https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js', integrity: 'sha384-BGX7Wb16GmRFagri4bLJV2DgipVZaU2AI812GZtHtHzzDQJnfHasDXN5houxv45w' };
   const KEY = 'cr:v1:';
-  const KAKAO_ICON = 'https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png';   // 카카오 개발자센터 공식 공유 버튼 이미지
-  const ICON = {
-    copy: '<svg class="cp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5A2 2 0 0 0 13.5 4.5H6.5A2 2 0 0 0 4.5 6.5V13.5A2 2 0 0 0 6.5 15.5H8.5"/></svg>',
-    check: '<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
-  };
-
   const $ = (s) => document.querySelector(s);
   const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ESC[c]);
@@ -218,7 +201,7 @@ details.orig[open] > summary::after { content: "▾"; }
     set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
   };
   const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all',
-    open: new Set(), orig: new Set(), kakao: 'idle', focus: null, focusDone: false };
+    open: new Set(), orig: new Set(), focus: null, focusDone: false };
   const f0 = store.get('filter');
   if (f0 === 'special' || f0 === 'new') S.filter = f0;
   try { S.focus = new URLSearchParams(location.search).get('item'); } catch (e) { S.focus = null; }
@@ -236,8 +219,6 @@ details.orig[open] > summary::after { content: "▾"; }
   const smallest = (it) => (it.sizes || []).map((s) => Object.assign({ g: gramsOf(s.label) }, s)).filter((s) => s.g).sort((a, b) => a.g - b.g)[0] || (it.sizes || [])[0] || null;
   const vendors = () => (S.data && S.data.vendors) || [];
   const vendorOf = (id) => vendors().find((v) => v.id === id) || { id, short: id.toUpperCase(), name: id };
-  const pageUrl = () => ((S.data && S.data.config && S.data.config.pageUrl) || (location.origin + location.pathname)).replace(/\/+$/, '');
-  const itemUrl = (it) => pageUrl() + '/?item=' + encodeURIComponent(it.key);
   const nameOf = (it) => [it.producer, it.farm].filter(Boolean).join(' · ');
   const timeFmt = new Intl.DateTimeFormat('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
   function stamp(ms) {
@@ -306,10 +287,7 @@ details.orig[open] > summary::after { content: "▾"; }
         <div class="more-body">
           ${spec.length ? `<dl class="spec">${spec.map(([a, x]) => `<div><dt>${a}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>` : ''}
           ${textBlocks(it)}
-          <div class="share" role="group" aria-label="공유">
-            ${S.kakao === 'ready' ? `<button type="button" class="sbtn kakao" data-kakao="${k}"><span class="ic"><img src="${KAKAO_ICON}" alt="" width="44" height="44"></span><span>카카오톡</span></button>` : ''}
-            <button type="button" class="sbtn copy" data-share="${k}"><span class="ic">${ICON.copy}${ICON.check}</span><span>문구 복사</span></button>
-          </div>
+          <div class="share"><button type="button" class="ghost share-btn" data-share="${k}">공유하기</button></div>
         </div>
       </details>
     </article>`;
@@ -386,44 +364,13 @@ details.orig[open] > summary::after { content: "▾"; }
       d = carryOver(d, S.data);
       S.data = d; S.fromCache = false;
       store.set('last', d);
-      initKakao(d.config && d.config.kakaoJsKey);
     } catch (e) { S.error = e; }
     S.loading = false;
     render();
     applyFocus();
   }
 
-  // ---------- 카톡 공유 ----------
-  function initKakao(key) {
-    if (!key) { S.kakao = 'off'; return; }
-    if (S.kakao === 'ready' || S.kakao === 'loading') return;
-    S.kakao = 'loading';
-    const s = document.createElement('script');
-    s.src = KAKAO_SDK.src; s.integrity = KAKAO_SDK.integrity; s.crossOrigin = 'anonymous';
-    s.onload = () => {
-      try { if (!window.Kakao.isInitialized()) window.Kakao.init(key); S.kakao = window.Kakao.isInitialized() ? 'ready' : 'off'; }
-      catch (e) { S.kakao = 'off'; }
-      render();
-    };
-    s.onerror = () => { S.kakao = 'off'; render(); };
-    document.head.appendChild(s);
-  }
-  function kakaoCard(it) {
-    const v = vendorOf(it.vendor), s = smallest(it), url = itemUrl(it);
-    const title = (it.special ? '☕ ' + v.short + ' 스페셜 · ' : '☕ ' + v.short + ' · ') + nameOf(it);
-    const desc = [it.countryKo, (it.notes || []).join('·'), s ? s.label + ' ' + money(s.price, it.currency) : ''].filter(Boolean).join(' | ');
-    const link = { mobileWebUrl: url, webUrl: url };
-    const buttons = [{ title: '레이더에서 보기', link }];
-    return it.image
-      ? { objectType: 'feed', content: { title, description: desc, imageUrl: it.image, link }, buttons }
-      : { objectType: 'text', text: title + '\n' + desc, link, buttons };
-  }
-  function shareKakao(it, btn) {
-    try { window.Kakao.Share.sendDefault(kakaoCard(it)); tip(btn, '카카오톡 여는 중…'); }
-    catch (e) { tip(btn, '카톡 공유를 열지 못했어요', true); }
-  }
-
-  // ---------- 문구 복사 ----------
+  // ---------- 공유하기: 휴대폰은 공유창(카톡 단톡방 바로 선택), PC는 문구 복사 ----------
   function shareText(it) {
     const v = vendorOf(it.vendor), s = smallest(it);
     const header = it.special ? `☕ ${v.short} 스페셜 — 애드온 할까요?` : `☕ ${v.short} 원두`;
@@ -432,6 +379,15 @@ details.orig[open] > summary::after { content: "▾"; }
     const top = [header, title, info, (it.notes || []).join('·')].filter(Boolean).join('\n');
     const price = s ? `${s.label} ${money(s.price, it.currency)}` : '';
     return [top, price, it.url].filter(Boolean).join('\n\n');
+  }
+  const touch = () => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
+  function shareIt(it, btn) {
+    const text = shareText(it);
+    if (touch() && navigator.share) {
+      navigator.share({ text }).catch((e) => { if (!e || e.name !== 'AbortError') copy(text, btn); });   // 닫으면 그대로, 공유창이 안 열리면 복사
+      return;
+    }
+    copy(text, btn);
   }
   function note(msg, warn) {
     const el = $('#note'); el.textContent = msg; el.className = 'note' + (warn ? ' warn' : ''); el.hidden = false;
@@ -478,8 +434,7 @@ details.orig[open] > summary::after { content: "▾"; }
     else if (t.dataset.vendor) { S.vendor = t.dataset.vendor; render(); }
     else if (t.id === 'reload') load();
     else if (t.dataset.closeCopy) { const box = t.closest('.copybox'); if (box) box.remove(); }
-    else if (t.dataset.kakao) { const it = find(t.dataset.kakao); if (it) shareKakao(it, t); }
-    else if (t.dataset.share) { const it = find(t.dataset.share); if (it) copy(shareText(it), t); }
+    else if (t.dataset.share) { const it = find(t.dataset.share); if (it) shareIt(it, t); }
   });
   document.addEventListener('error', (e) => {   // 로고 이미지가 깨지면 약칭 배지로
     const im = e.target;
