@@ -67,7 +67,14 @@ h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-sp
 .tab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
 
 .list { display: grid; gap: 12px; margin-top: 12px; }
-@media (min-width: 720px) { .list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; } }
+@media (min-width: 720px) {
+  .list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  /* 나란히 놓인 두 카드: 내용·가격·상세정보 3칸을 함께 써서 높이와 가격 줄 위치가 같게 (상세정보를 펼쳐도 옆 카드 가격 줄은 그대로) */
+  .list > .coffee { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
+  .list > .coffee > .c-buy { align-self: start; }
+  @supports not (grid-template-rows: subgrid) { .list > .coffee { display: flex; } .list .c-main { flex: 1 0 auto; } }
+}
+.c-main { display: flex; flex-direction: column; min-width: 0; }
 .empty { margin: 0; color: var(--ink-2); font-size: 15px; padding: 8px 0; }
 
 /* 원두 카드: 로스터리 → 원두 이름(가장 크게) → 농장 → 맛 노트 태그 → 산지·가공 → 가격·주문 */
@@ -92,7 +99,7 @@ h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-sp
 .c-buy { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; flex-wrap: wrap; margin-top: 20px; }
 .price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; font-variant-numeric: tabular-nums; min-width: 0; }
 .price b { font: 700 21px/1.1 var(--f-body); letter-spacing: -0.01em; }
-.price .size, .price .krw { font-size: 14px; color: var(--ink-2); }
+.price .size, .price .orig { font-size: 14px; color: var(--ink-2); }
 .order { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 600; font-size: 15px; white-space: nowrap; }
 details.more { margin-top: 16px; border-top: 1px solid var(--rule); }
 details.more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; min-height: 48px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
@@ -182,7 +189,7 @@ details.orig[open] > summary::after { content: "▾"; }
       <li><b>스페셜</b>: SEY COFFEE는 125g 소포장이거나 250g 환산 ₩48,000 이상, 다른 로스터리는 250g 환산 가격이 그 가게 원두 중간값의 1.6배 이상인 원두예요.</li>
       <li><b>NEW</b>: 올라온 지 7일이 안 된 원두예요.</li>
       <li><b>가공 과정·제품 설명</b>: 원문을 구글 번역으로 옮긴 거예요. 표현이 어색하면 상세정보의 '원문 보기'로 확인하세요.</li>
-      <li>5분마다 각 사이트에서 최신 정보를 받아와요. 가격은 한국에서 주문할 때 기준이고, 외화 옆 ≈ ₩는 매일 받는 환율로 계산한 참고 금액이에요.</li>
+      <li>5분마다 각 사이트에서 최신 정보를 받아와요. 가격은 한국에서 주문할 때 기준이에요. 외화로 파는 곳은 매일 받는 환율로 바꾼 원화(≈₩)를 먼저 보여드리고, 현지 가격은 옆에 적어 둬요.</li>
     </ul>
   </footer>
 </main>
@@ -207,18 +214,13 @@ details.orig[open] > summary::after { content: "▾"; }
   if (S.focus) { S.filter = 'all'; S.open.add(S.focus); }
 
   // ---------- 표시 도우미 ----------
-  // 가격: ₩36,000 · $25.00 · ¥22,000 · €12.50 · DKK 129.60 · NOK 190.43 / 외화는 원화 환산(≈ ₩)을 함께
+  // 가격은 원화로 통일: 원화 판매 ₩95,000 · 외화 판매 ≈₩52,700(환산) + 현지 가격 NOK 364.35 (통화 코드 표기)
   const num = (x, d) => Number(x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
-  function money(v, cur) {
-    const n = Number(v);
-    if (cur === 'KRW') return '₩' + Math.round(n).toLocaleString('ko-KR');
-    if (cur === 'USD') return '$' + n.toFixed(2);
-    if (cur === 'JPY') return '¥' + num(Math.round(n), 0);
-    if (cur === 'EUR') return '€' + num(n, 2);
-    return (cur || '') + ' ' + num(n, Math.round(n) === n ? 0 : 2);
-  }
-  const won = (x) => (x && x.krw > 0 ? '≈ ₩' + Math.round(x.krw).toLocaleString('ko-KR') : '');
-  const sizeLine = (x, cur) => [x.label, money(x.price, cur)].filter(Boolean).join(' ') + (won(x) ? ` (${won(x)})` : '') + (x.available ? '' : ' (품절)');
+  const ZERO_DEC = { KRW: 1, JPY: 1 };
+  const money = (v, cur) => (cur === 'KRW' ? '₩' + num(Math.round(v), 0) : (cur || '') + ' ' + num(v, ZERO_DEC[cur] ? 0 : 2));
+  const mainPrice = (x, cur) => (cur === 'KRW' ? money(x.price, 'KRW') : x.krw > 0 ? '≈₩' + num(Math.round(x.krw), 0) : money(x.price, cur));
+  const origPrice = (x, cur) => (cur !== 'KRW' && x.krw > 0 ? money(x.price, cur) : '');
+  const sizeLine = (x, cur) => [x.label, mainPrice(x, cur)].filter(Boolean).join(' ') + (origPrice(x, cur) ? ` (${origPrice(x, cur)})` : '') + (x.available ? '' : ' (품절)');
   function gramsOf(label) {
     const s = String(label || '').toLowerCase();
     let m = s.match(/([\d.]+)\s*kg/); if (m) return +m[1] * 1000;
@@ -281,6 +283,7 @@ details.orig[open] > summary::after { content: "▾"; }
     const facts = [['산지', place], ['품종', esc(it.variety)], ['가공', esc(it.process)]].filter((x) => x[1]);
     const k = esc(it.key);
     return `<article class="coffee${it.special ? ' is-hot' : ''}${it.available ? '' : ' is-out'}${it.stale ? ' stale' : ''}" data-key="${k}">
+      <div class="c-main">
       <div class="c-top">
         <span class="vbadge">${logoHTML(v)}<span class="vname">${esc(v.name)}</span></span>
         ${flags.length ? `<div class="flags">${flags.join('')}</div>` : ''}
@@ -289,8 +292,9 @@ details.orig[open] > summary::after { content: "▾"; }
       ${it.farm ? `<p class="farm">${esc(it.farm)}</p>` : ''}
       ${it.notes && it.notes.length ? `<ul class="notes" aria-label="맛 노트">${it.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
       ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
+      </div>
       <div class="c-buy">
-        <div class="price">${s ? `<b>${esc(money(s.price, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${won(s) ? `<span class="krw">${esc(won(s))}</span>` : ''}` : ''}</div>
+        <div class="price">${s ? `<b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}` : ''}</div>
         <a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
