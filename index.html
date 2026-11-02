@@ -90,6 +90,7 @@ h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-sp
 .flag.special { background: var(--hot); color: var(--hot-ink); }
 .flag.new { background: var(--leaf-soft); color: var(--leaf); }
 .flag.out { background: var(--warn-soft); color: var(--warn); }
+.flag.attr { background: var(--chip); color: var(--ink); font-weight: 600; }   /* 디카페인·코퍼먼트 */
 .producer { margin: 18px 0 0; font: 700 25px/1.18 var(--f-display); letter-spacing: -0.015em; overflow-wrap: anywhere; text-wrap: balance; }
 .producer.long { font-size: 21px; line-height: 1.22; }   /* 긴 이름(28자 넘음)은 한 단계 작게 */
 .farm { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); overflow-wrap: anywhere; }
@@ -98,7 +99,9 @@ h1 { margin: 0; font: 700 clamp(25px, 6.8vw, 34px)/1.15 var(--f-body); letter-sp
 .facts { margin: 16px 0 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; gap: 6px 14px; font-size: 15px; line-height: 1.45; }
 .facts div, .spec div { display: contents; }
 .facts dt, .spec dt { color: var(--ink-2); font-size: 13.5px; font-weight: 500; }
-.facts dd { margin: 0; overflow-wrap: anywhere; }
+.facts dd { margin: 0; overflow-wrap: anywhere; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* 산지·품종·가공은 한 줄, 넘치면 … */
+.facts dd.cut { cursor: pointer; }
+.facts dd.open { white-space: normal; overflow: visible; }   /* 누르면 펼침 */
 .facts .country { font-weight: 600; }
 .c-buy { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; flex-wrap: wrap; margin-top: 20px; }
 .price { display: flex; flex-direction: column; gap: 3px; font-variant-numeric: tabular-nums; min-width: 0; }
@@ -267,7 +270,7 @@ details.orig[open] > summary::after { content: "▾"; }
   const PAGE = 24;   // 한 번에 그리는 카드 수 (나머지는 '더 보기')
   const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all', sort: 'new', limit: PAGE,
     texts: null, textState: 'idle', textSeq: 0,   // 가공 과정·제품 설명은 목록 다음에 따로 받음 (part=text)
-    open: new Set(), orig: new Set(), focus: null, focusDone: false };
+    open: new Set(), orig: new Set(), facts: new Set(), focus: null, focusDone: false };
   const f0 = store.get('filter');
   if (f0 === 'special' || f0 === 'new') S.filter = f0;
   const s0 = store.get('sort');
@@ -352,15 +355,37 @@ details.orig[open] > summary::after { content: "▾"; }
       : '';
     return blocks + (missing ? '<p class="tr-note">번역이 아직 없어 원문으로 보여드려요.</p>' : '') + orig;
   }
+  // 디카페인·코퍼먼트(과일 등과 함께 발효·인퓨즈드): 가공 칸이나 상품명에 표기가 있을 때만
+  const attrsOf = (it) => { const t = [it.process, it.title].join(' '); const a = [];
+    if (/decaf/i.test(t)) a.push('디카페인');
+    if (/co-?ferment|infus/i.test(t)) a.push('코퍼먼트');
+    return a; };
+  const plain = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const origTitle = (it) => (it.title && plain(it.title) !== plain(it.producer) ? it.title : '');
+  function markCut(root) {   // 한 줄을 넘는 산지·품종·가공 칸만 … + 누르면 펼침
+    (root || document).querySelectorAll('.facts dd:not(.open)').forEach((dd) => {
+      const cut = dd.scrollWidth > dd.clientWidth + 1;
+      dd.classList.toggle('cut', cut);
+      if (cut) { dd.tabIndex = 0; dd.setAttribute('role', 'button'); dd.setAttribute('aria-expanded', 'false'); }
+      else { dd.removeAttribute('tabindex'); dd.removeAttribute('role'); dd.removeAttribute('aria-expanded'); }
+    });
+  }
+  function toggleFact(dd) {
+    const on = !dd.classList.contains('open');
+    dd.classList.toggle('open', on); dd.setAttribute('aria-expanded', String(on));
+    if (on) S.facts.add(dd.dataset.f); else S.facts.delete(dd.dataset.f);
+  }
   function cardHTML(it) {
     const v = vendorOf(it.vendor);
     const flags = [];
     if (it.special) flags.push('<span class="flag special">스페셜</span>');
     if (it.isNew) flags.push('<span class="flag new">NEW</span>');
+    attrsOf(it).forEach((a) => flags.push(`<span class="flag attr">${a}</span>`));
     if (!it.available) flags.push('<span class="flag out">품절</span>');
     const s = basisOf(it), unit = unitText(it);
     const sizes = (it.sizes || []).map((x) => esc(sizeLine(x, it.currency))).join('<br>');
-    const spec = [['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
+    const orig = origTitle(it);   // 줄인 이름이면 원래 상품명 (사이트에서 찾을 때)
+    const spec = [['상품명', esc(orig)], ['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
     const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(it.region || '')].filter(Boolean).join(' ');
     const facts = [['산지', place], ['품종', esc(it.variety)], ['가공', esc(it.process)]].filter((x) => x[1]);
     const k = esc(it.key);
@@ -373,7 +398,8 @@ details.orig[open] > summary::after { content: "▾"; }
       <h2 class="producer${String(it.producer || '').length > 28 ? ' long' : ''}">${esc(it.producer)}</h2>
       ${it.farm ? `<p class="farm">${esc(it.farm)}</p>` : ''}
       ${it.notes && it.notes.length ? `<ul class="notes" aria-label="맛 노트">${it.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-      ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
+      ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => { const f = it.key + '|' + a, on = S.facts.has(f);
+        return `<div><dt>${a}</dt><dd data-f="${esc(f)}"${on ? ' class="cut open" tabindex="0" role="button" aria-expanded="true"' : ''}>${x}</dd></div>`; }).join('')}</dl>` : ''}
       </div>
       <div class="c-buy">
         <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
@@ -423,6 +449,7 @@ details.orig[open] > summary::after { content: "▾"; }
       if (i >= S.limit) S.limit = Math.ceil((i + 1) / PAGE) * PAGE;
     }
     box.innerHTML = list.slice(0, S.limit).map(cardHTML).join('');
+    markCut(box);
     const rest = list.length - Math.min(list.length, S.limit);
     if (rest > 0) { $('#moreBtn').textContent = `더 보기 (${rest}종 더)`; more.hidden = false; }
   }
@@ -597,6 +624,8 @@ details.orig[open] > summary::after { content: "▾"; }
   // ---------- 이벤트 ----------
   const find = (key) => ((S.data && S.data.items) || []).find((x) => x.key === key);
   document.addEventListener('click', (e) => {
+    const dd = e.target.closest('.facts dd.cut');
+    if (dd) { toggleFact(dd); return; }
     const t = e.target.closest('button');
     if (!t) return;
     if (t.dataset.filter) { S.filter = t.dataset.filter; S.limit = PAGE; store.set('filter', S.filter); render(); }
@@ -608,7 +637,11 @@ details.orig[open] > summary::after { content: "▾"; }
   });
   $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; S.limit = PAGE; store.set('sort', S.sort); render(); });
   $('#vtabs').addEventListener('scroll', fadeChips, { passive: true });
-  addEventListener('resize', fadeChips);
+  addEventListener('resize', () => { fadeChips(); clearTimeout(markCut.t); markCut.t = setTimeout(() => markCut($('#list')), 150); });
+  document.addEventListener('keydown', (e) => {
+    const dd = e.target.closest && e.target.closest('.facts dd.cut');
+    if (dd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleFact(dd); }
+  });
   document.addEventListener('error', (e) => {   // 로고 이미지가 깨지면 약칭 배지로
     const im = e.target;
     if (!im || !im.classList || !im.classList.contains('vimg')) return;
