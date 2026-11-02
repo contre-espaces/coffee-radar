@@ -183,17 +183,18 @@ details.orig[open] > summary::after { content: "▾"; }
 .vtab[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; }
 .coffee.focus { outline: 2px solid var(--leaf); outline-offset: 2px; }
 .coffee.stale { opacity: .6; }
-.share { display: flex; }
+.buy-act { display: flex; align-items: center; gap: 8px; margin-left: auto; }   /* 가격 줄 오른쪽: 공유 · 주문 (좁으면 다음 줄 오른쪽) */
+.c-buy .share-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
 .share-btn { position: relative; transition: border-color .2s ease, color .2s ease; }
 .share-btn.done { border-color: var(--leaf); color: var(--leaf); }
-/* 누른 버튼 바로 위 말풍선 — 버튼 왼쪽 끝에 맞춰 화면 밖으로 안 나가게 */
-.tip { position: absolute; bottom: calc(100% + 9px); left: 0; transform: translateY(5px); padding: 8px 11px; border-radius: 10px; background: var(--ink); color: var(--panel);
+/* 누른 버튼 바로 위 말풍선 — 버튼 오른쪽 끝에 맞춰 화면 밖으로 안 나가게 */
+.tip { position: absolute; bottom: calc(100% + 9px); right: 0; transform: translateY(5px); padding: 8px 11px; border-radius: 10px; background: var(--ink); color: var(--panel);
   font: 600 13px/1 var(--f-body); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .16s ease, transform .16s ease; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); z-index: 5; }
-.tip::after { content: ""; position: absolute; top: 100%; left: 30px; border: 6px solid transparent; border-top-color: var(--ink); }
+.tip::after { content: ""; position: absolute; top: 100%; right: 22px; border: 6px solid transparent; border-top-color: var(--ink); }
 .tip.on { opacity: 1; transform: none; }
 .tip.warn { background: var(--warn); }
 .tip.warn::after { border-top-color: var(--warn); }
-.copybox { display: grid; gap: 8px; }
+.copybox { display: grid; gap: 8px; flex-basis: 100%; }
 .copybox textarea { width: 100%; min-height: 150px; font: 400 15px/1.55 var(--f-body); padding: 10px; border-radius: 10px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); resize: vertical; }
 .copybox .ghost { justify-self: start; }
 @media (prefers-reduced-motion: reduce) { .tip, .share-btn { transition: none; } }
@@ -403,14 +404,13 @@ details.orig[open] > summary::after { content: "▾"; }
       </div>
       <div class="c-buy">
         <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
-        <a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a>
+        <div class="buy-act share"><button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a></div>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
         <summary>상세정보</summary>
         <div class="more-body">
           ${spec.length ? `<dl class="spec">${spec.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
           <div class="txtbox" data-t="${k}">${textBlocks(it)}</div>
-          <div class="share"><button type="button" class="ghost share-btn" data-share="${k}">공유하기</button></div>
         </div>
       </details>
     </article>`;
