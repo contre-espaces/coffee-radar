@@ -137,7 +137,7 @@ details.orig[open] > summary::after { content: "▾"; }
 .txtbox { display: grid; gap: 18px; min-width: 0; }
 .txtbox:empty { display: none; }
 
-/* 하단 안내: 보는 법 · 텔레그램 알림 · 지켜보는 로스터리 · 데이터 안내 (PC 2열) */
+/* 하단 안내: 보는 법 · 새 원두 알림(텔레그램·X·Threads) · 지켜보는 로스터리 · 데이터 안내 (PC 2열) */
 .memo { border-top: 1px solid var(--rule); padding-top: 20px; color: var(--ink-2); font-size: 14px; line-height: 1.65; display: grid; gap: 24px; }
 .m-block { display: grid; gap: 8px; align-content: start; min-width: 0; }
 .memo h2 { margin: 0; font-size: 15px; line-height: 1.4; color: var(--ink); }
@@ -147,6 +147,8 @@ details.orig[open] > summary::after { content: "▾"; }
 .memo a { color: var(--ink); text-decoration-color: var(--ink-3); text-underline-offset: 3px; }
 .memo ul.roasters { list-style: none; padding-left: 0; display: flex; flex-wrap: wrap; gap: 2px 14px; }
 .memo ul.roasters a { display: inline-block; padding: 3px 0; }
+.memo .sns-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.memo .sns-links a { display: inline-block; padding: 3px 0; }
 .memo a.tg-link { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--leaf); color: var(--leaf); font-weight: 600; text-decoration: none; }
 @media (min-width: 720px) { .memo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px; } }
 @media (min-width: 720px) {
@@ -236,9 +238,11 @@ details.orig[open] > summary::after { content: "▾"; }
       </ul>
     </section>
     <section class="m-block">
-      <h2>텔레그램 알림 받기</h2>
-      <p>새 원두가 올라오면 텔레그램으로 알려드려요. 봇 대화창에서 '시작'을 누르면 받기 시작하고, /stop 을 보내면 멈춰요.</p>
-      <a class="tg-link" href="https://t.me/BeanDropBot" target="_blank" rel="noopener">@BeanDropBot 열기 <span aria-hidden="true">↗</span></a>
+      <h2>새 원두 알림 받기</h2>
+      <p>새 원두가 올라오면 텔레그램으로 바로 알려드려요. 봇 대화창에서 '시작'을 누르면 받기 시작하고, /stop 을 보내면 멈춰요.</p>
+      <a class="tg-link" href="https://t.me/tastingwirebot" target="_blank" rel="noopener">@tastingwirebot 열기 <span aria-hidden="true">↗</span></a>
+      <p>같은 소식을 X·Threads에도 바로 올려요 — 원두 사진·산지·가격·상품 링크까지.</p>
+      <p class="sns-links"><a href="https://x.com/tastingwire" target="_blank" rel="noopener">X @tastingwire ↗</a><a href="https://www.threads.com/@tastingwire" target="_blank" rel="noopener">Threads @tastingwire ↗</a></p>
     </section>
     <section class="m-block">
       <h2 id="rTitle">지켜보는 로스터리</h2>
