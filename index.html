@@ -274,7 +274,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     <section class="m-block">
       <h2 id="rTitle">지켜보는 로스터리</h2>
       <ul class="roasters" id="roasters"><li>불러오는 중…</li></ul>
-      <p id="rScope">필터용 원두만 모아요 — 에스프레소용·세트·구독 상품은 빼요.</p>
+      <p id="rScope">필터용 싱글 오리진만 모아요 — 블렌드·에스프레소용·세트·구독 상품은 빼요</p>
     </section>
     <section class="m-block">
       <h2>데이터 안내</h2>
@@ -526,8 +526,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     if (!vs.length) return;
     $('#rTitle').textContent = `지켜보는 로스터리 ${vs.length}곳`;
     $('#roasters').innerHTML = vs.map((v) => `<li>${/^https:\/\//i.test(v.site || '') ? `<a href="${esc(v.site)}" target="_blank" rel="noopener">${esc(v.name)}</a>` : esc(v.name)}</li>`).join('');
-    const nb = vs.filter((v) => v.noBlend).map((v) => v.short);
-    $('#rScope').textContent = '필터용 원두만 모아요 — 에스프레소용·세트·구독 상품은 빼요.' + (nb.length ? ` 블렌드도 빼는 곳: ${nb.join('·')}` : '');
+    $('#rScope').textContent = '필터용 싱글 오리진만 모아요 — 블렌드·에스프레소용·세트·구독 상품은 빼요';
     const by = {};
     vs.forEach((v) => { if (v.every > 0) (by[v.every] = by[v.every] || []).push(v); });
     const ks = Object.keys(by).map(Number).sort((a, b) => a - b);
