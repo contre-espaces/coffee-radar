@@ -513,7 +513,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   const topOf = (it) => it.regionTop || '';
   const subOf = (it) => (Array.isArray(it.regionSub) ? it.regionSub.join(' · ') : (it.region || ''));
   const originText = (it) => [it.countryKo, topOf(it)].filter(Boolean).join(' · ');
-  const sameKey = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+(?:and|&)\s+|[·,\/&+]/g, ',').replace(/[\s-]+/g, '');
+  const sameKey = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/geisha/g, 'gesha').replace(/\s+(?:and|&)\s+|[·,\/&+]/g, ',').replace(/[\s-]+/g, '');
   const PLAIN_PROC = /^(?:fully |classic |traditional )?(?:washed|natural|honey)(?: process(?:ed)?)?$/i;   // 번역만 다른 기본 가공은 원문을 따로 안 보여 줌
   const rawOf = (it) => [   // 상세정보: 표준 표기와 다른 원문
     ['산지 원문', it.region && sameKey(it.region) !== sameKey([topOf(it), subOf(it)].filter(Boolean).join(',')) ? it.region : ''],
