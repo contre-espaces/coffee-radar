@@ -60,7 +60,7 @@ h1 .mark { flex: none; width: 0.9em; height: 0.9em; color: var(--leaf); }   /* �
 .statusline { margin: 0; font-size: 14px; line-height: 20px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .statusline .live { color: var(--leaf); font-weight: 500; }
 .statusline .bad { color: var(--warn); }
-.btn, .ghost, .tab, .vtab, .order, .sortbar select { transition: background-color .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease), transform .16s var(--ease); }
+.btn, .ghost, .tab, .vtab, .order, .sortbar select, .fbtn, .fopt, .fchip { transition: background-color .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease), transform .16s var(--ease); }
 .btn { font: 500 14px/1 var(--f-body); min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--leaf); background: transparent; color: var(--leaf); cursor: pointer; white-space: nowrap; }
 .btn:disabled { opacity: .55; cursor: default; }
 .statusrow { display: flex; align-items: center; justify-content: space-between; gap: 4px 12px; }
@@ -127,6 +127,27 @@ h1 .mark { flex: none; width: 0.9em; height: 0.9em; color: var(--leaf); }   /* �
 .price .size, .price .orig { font-size: 14px; color: var(--ink-2); }
 .price .unit { font-size: 14px; color: var(--ink-2); }   /* 100g당 가격: 용량이 달라도 비교되게 */
 .sortbar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; color: var(--ink-2); }
+/* 필터: 버튼 하나 → 펼치면 가공·발효·품종·노트 계열·나라(→ 주 산지) · 고른 조건은 버튼 옆 작은 칩 */
+.fbar { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-right: auto; padding: 2px 0; }
+.fbar::-webkit-scrollbar { display: none; }
+.fchips { display: flex; align-items: center; gap: 8px; }
+.fbtn { flex: none; display: inline-flex; align-items: center; gap: 6px; font: 500 14px/1 var(--f-body); min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+.fbtn::after { content: ""; width: 14px; height: 14px; background: currentColor; -webkit-mask: var(--chev) center / 14px no-repeat; mask: var(--chev) center / 14px no-repeat; transition: transform .16s var(--ease); }
+.fbtn[aria-expanded="true"]::after { transform: rotate(180deg); }
+.fbtn b { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--ink); color: var(--panel); display: inline-grid; place-items: center; font-size: 12px; }
+.fchip { flex: none; display: inline-flex; align-items: center; gap: 4px; font: 500 14px/1 var(--f-body); min-height: 32px; padding: 0 8px 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.fchip span { font-size: 16px; line-height: 1; color: var(--ink-2); }
+.fpanel { margin-top: 12px; padding: 16px; border: 1px solid var(--rule); border-radius: 12px; background: var(--panel); display: grid; gap: 16px; }
+.fgroup h3 { margin: 0 0 8px; font: 600 14px/1.2 var(--f-body); color: var(--ink-2); }
+.fopts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fopt { display: inline-flex; align-items: center; gap: 6px; font: 500 14px/1 var(--f-body); min-height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+.fopt b { font-weight: 400; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.fopt[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
+.fopt[aria-pressed="true"] b { color: inherit; opacity: .8; }
+.fopt[data-f]::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--fc); }
+.fopt.zero { opacity: .5; }
+.fmore { font: 500 14px/1 var(--f-body); min-height: 36px; padding: 0 8px; border: 0; background: none; color: var(--leaf); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.factions { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 12px; }
 .sortbar select { font: 500 14px/1.2 var(--f-body); min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
 .order { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 10px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 500; font-size: 15px; white-space: nowrap; }
 details.more { margin-top: 16px; border-top: 1px solid var(--rule); }
@@ -209,7 +230,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .share-btn { position: relative; }
 .share-btn.done { border-color: var(--leaf); color: var(--leaf); }
 @media (hover: hover) {
-  .tab:hover, .vtab:hover, .ghost:hover { border-color: var(--ink-3); }
+  .tab:hover, .vtab:hover, .ghost:hover, .fbtn:hover, .fopt:hover, .fchip:hover { border-color: var(--ink-3); }
   .tab[aria-pressed="true"]:hover, .vtab[aria-pressed="true"]:hover { border-color: var(--ink); }
   .btn:hover { background: var(--leaf-soft); }
   .order:hover { background: color-mix(in srgb, var(--leaf) 88%, var(--ink)); }
@@ -246,7 +267,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       <button type="button" class="tab" data-filter="new" aria-pressed="false">NEW<b id="cntNew">–</b></button>
     </div>
     <div class="vtabs" id="vtabs" role="group" aria-label="업체 필터" hidden></div>
-    <div class="sortbar"><label for="sort">정렬</label><select id="sort"><option value="new">최신순</option><option value="cheap">100g당 싼 순</option><option value="pricey">100g당 비싼 순</option></select></div>
+    <div class="sortbar"><div class="fbar"><button type="button" class="fbtn" id="fBtn" aria-expanded="false" aria-controls="fPanel">필터</button><div class="fchips" id="fChips" role="group" aria-label="고른 필터"></div></div><label for="sort">정렬</label><select id="sort"><option value="new">최신순</option><option value="cheap">100g당 싼 순</option><option value="pricey">100g당 비싼 순</option></select></div>
+    <div class="fpanel" id="fPanel" role="region" aria-label="필터" hidden></div>
     <div id="list" class="list"><p class="empty">불러오는 중…</p></div>
     <div class="more-box" id="moreBox" hidden><button type="button" class="ghost more-btn" id="moreBtn">더 보기</button></div>
   </section>
@@ -303,13 +325,15 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   const PAGE = 24;   // 한 번에 그리는 카드 수 (나머지는 '더 보기')
   const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all', sort: 'new', limit: PAGE,
     texts: null, textState: 'idle', textSeq: 0,   // 가공 과정·제품 설명은 목록 다음에 따로 받음 (part=text)
-    open: new Set(), orig: new Set(), facts: new Set(), focus: null, focusDone: false };
+    open: new Set(), orig: new Set(), facts: new Set(), focus: null, focusDone: false,
+    f: { proc: new Set(), tag: new Set(), var: new Set(), fam: new Set(), cty: new Set(), top: new Set() }, fOpen: false, fAllVar: false };
   const f0 = store.get('filter');
   if (f0 === 'special' || f0 === 'new') S.filter = f0;
   const s0 = store.get('sort');
   if (s0 === 'cheap' || s0 === 'pricey') S.sort = s0;
   try { S.focus = new URLSearchParams(location.search).get('item'); } catch (e) { S.focus = null; }
   if (S.focus) { S.filter = 'all'; S.open.add(S.focus); }
+  else { const f1 = store.get('f'); if (f1 && typeof f1 === 'object') Object.keys(S.f).forEach((g) => { if (Array.isArray(f1[g])) f1[g].forEach((x) => S.f[g].add(String(x))); }); }   // 공유 링크로 연 원두는 필터 없이
 
   // ---------- 표시 도우미 ----------
   // 가격은 원화로 통일: 원화 판매 ₩95,000 · 외화 판매 ≈₩52,700(환산) + 현지 가격 NOK 364.35 (통화 코드 표기)
@@ -369,6 +393,74 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     if (/꿀$|\bhoney$/i.test(s)) return 'sweet';   // 들꽃 꿀 · wildflower honey
     const hit = NOTE_FAMILY.find(([, re]) => re.test(s));
     return hit ? hit[0] : 'other';
+  }
+
+  // ---------- 필터 (같은 묶음은 '또는', 묶음끼리는 '그리고') ----------
+  const F_GROUPS = [['proc', '가공'], ['tag', '발효·특징'], ['var', '품종'], ['fam', '노트 계열'], ['cty', '나라'], ['top', '주 산지']];
+  const F_ORDER = { proc: ['워시드', '내추럴', '허니', '펄프드 내추럴', '세미 워시드', '웻헐'],
+    tag: ['무산소', '카보닉', '효모', '저온 발효', '열충격', '장시간 발효', '더블 발효', '젖산 발효', '모스토 발효', '디카페인', '코퍼먼트'],
+    fam: ['berry', 'citrus', 'fruit', 'floral', 'sweet', 'other'] };
+  const FAM_LABEL = { berry: '베리·붉은 과일', citrus: '시트러스', fruit: '과일', floral: '꽃', sweet: '단맛·초콜릿·견과', other: '차·와인·향신료 등' };
+  const VAR_SHOW = 12;   // 품종은 많이 나온 순 12개 + 더 보기
+  function facetsOf(it) {
+    if (!it._fc) it._fc = { proc: it.procBase || [], tag: (it.procTags || []).concat(it.decaf ? ['디카페인'] : [], it.cof ? ['코퍼먼트'] : []),
+      var: (it.vars || []).map((x) => x.n), fam: [...new Set((it.notes || []).map(noteFamily))], cty: it.countryKo ? [it.countryKo] : [],
+      top: it.regionTop ? [(it.countryKo || '') + '|' + it.regionTop] : [] };
+    return it._fc;
+  }
+  const fCount = () => F_GROUPS.reduce((n, [g]) => n + S.f[g].size, 0);
+  function fPass(it, skip) {   // skip: 이 묶음은 빼고 검사 (선택지 옆 숫자용)
+    const fc = facetsOf(it);
+    for (const [g] of F_GROUPS) {
+      if (g === skip || !S.f[g].size) continue;
+      if (g === 'top') {   // 주 산지는 그 나라 원두에만: 고른 나라 중 주 산지를 고른 나라의 원두만 좁힘
+        const mine = [...S.f.top].filter((k) => k.split('|')[0] === (it.countryKo || ''));
+        if (mine.length && !mine.some((k) => fc.top.indexOf(k) >= 0)) return false;
+        continue;
+      }
+      if (!fc[g].some((x) => S.f[g].has(x))) return false;
+    }
+    return true;
+  }
+  const fLabel = (g, x) => (g === 'fam' ? FAM_LABEL[x] || x : g === 'top' ? (S.f.cty.size > 1 ? x.replace('|', ' · ') : x.split('|')[1]) : x);
+  function saveF() { const o = {}; F_GROUPS.forEach(([g]) => { o[g] = [...S.f[g]]; }); store.set('f', o); }
+  function renderFilter(base) {   // base: 지금 보기(탭·업체)의 원두
+    const n = fCount(), btn = $('#fBtn');
+    btn.innerHTML = '필터' + (n ? `<b>${n}</b>` : '');
+    btn.setAttribute('aria-expanded', String(S.fOpen));
+    const chips = [];
+    F_GROUPS.forEach(([g]) => S.f[g].forEach((x) => chips.push(`<button type="button" class="fchip" data-fdel="${esc(g + '\t' + x)}" aria-label="${esc(fLabel(g, x))} 조건 빼기">${esc(fLabel(g, x))}<span aria-hidden="true">×</span></button>`)));
+    $('#fChips').innerHTML = chips.join('');
+    const panel = $('#fPanel');
+    panel.hidden = !S.fOpen;
+    if (!S.fOpen) return;
+    const cnt = {}; F_GROUPS.forEach(([g]) => { cnt[g] = {}; });
+    base.forEach((it) => {
+      const fc = facetsOf(it);
+      F_GROUPS.forEach(([g]) => { if (fPass(it, g)) fc[g].forEach((x) => { cnt[g][x] = (cnt[g][x] || 0) + 1; }); });
+    });
+    const opt = (g, x) => `<button type="button" class="fopt${cnt[g][x] ? '' : ' zero'}" data-fopt="${esc(g + '\t' + x)}" aria-pressed="${S.f[g].has(x)}"${g === 'fam' ? ` data-f="${esc(x)}"` : ''}>${esc(fLabel(g, x))}<b>${cnt[g][x] || 0}</b></button>`;
+    const list = (g) => {
+      const has = (x) => cnt[g][x] || S.f[g].has(x);
+      if (F_ORDER[g]) return F_ORDER[g].filter(has);
+      let xs = Object.keys(cnt[g]).concat([...S.f[g]]).filter((x, i, a) => a.indexOf(x) === i && has(x));
+      if (g === 'top') xs = xs.filter((k) => S.f.cty.has(k.split('|')[0]));
+      return xs.sort((a, b) => (cnt[g][b] || 0) - (cnt[g][a] || 0) || (a < b ? -1 : 1));
+    };
+    const groups = F_GROUPS.map(([g, title]) => {
+      let xs = list(g);
+      if (g === 'top' && !S.f.cty.size) return '';
+      if (!xs.length) return '';
+      let more = '';
+      if (g === 'var' && !S.fAllVar && xs.length > VAR_SHOW) {
+        const shown = xs.slice(0, VAR_SHOW).concat(xs.slice(VAR_SHOW).filter((x) => S.f.var.has(x)));
+        more = `<button type="button" class="fmore" data-fmore>품종 ${xs.length - shown.length}개 더 보기</button>`;
+        xs = shown;
+      }
+      return `<div class="fgroup"><h3>${title}</h3><div class="fopts">${xs.map((x) => opt(g, x)).join('')}${more}</div></div>`;
+    }).join('');
+    const hits = base.filter((it) => fPass(it)).length;
+    panel.innerHTML = groups + `<div class="factions"><button type="button" class="ghost" data-fclear${n ? '' : ' disabled'}>모두 해제</button><button type="button" class="btn" data-fclose>${hits}종 보기</button></div>`;
   }
 
   // ---------- 그리기 ----------
@@ -493,14 +585,16 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     renderGuide(vs);
     if (vs.length > 1) {
       if (S.vendor !== 'all' && !vs.some((v) => v.id === S.vendor)) S.vendor = 'all';
-      const base = S.data.items.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true));   // 업체 칩 숫자: 지금 보기(전체·스페셜·NEW) 기준
+      const base = S.data.items.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true) && fPass(it));   // 업체 칩 숫자: 지금 보기(전체·스페셜·NEW)·필터 기준
       const n = {}; base.forEach((it) => { n[it.vendor] = (n[it.vendor] || 0) + 1; });
       vt.innerHTML = `<button type="button" class="vtab all" data-vendor="all" aria-pressed="${S.vendor === 'all'}">모든 업체<b>${base.length}</b></button>`
         + vs.map((v) => `<button type="button" class="vtab${v.logo ? '' : ' all'}${n[v.id] ? '' : ' zero'}" data-vendor="${esc(v.id)}" aria-pressed="${S.vendor === v.id}">${v.logo ? logoHTML(v) : ''}${esc(v.short)}<b>${n[v.id] || 0}</b></button>`).join('');
       vt.hidden = false;
     } else { vt.hidden = true; S.vendor = 'all'; }
     fadeChips();
-    const pool = S.data.items.filter((it) => S.vendor === 'all' || it.vendor === S.vendor);
+    const inVendor = S.data.items.filter((it) => S.vendor === 'all' || it.vendor === S.vendor);
+    renderFilter(inVendor.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true)));
+    const pool = inVendor.filter((it) => fPass(it));
     const sp = pool.filter((it) => it.special), nw = pool.filter((it) => it.isNew);
     $('#cntAll').textContent = pool.length; $('#cntSpecial').textContent = sp.length; $('#cntNew').textContent = nw.length;
     document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.filter === S.filter)));
@@ -508,8 +602,9 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     $('#sort').value = S.sort;
     const more = $('#moreBox');
     more.hidden = true;
+    if (!pool.length && fCount()) { box.innerHTML = '<p class="empty">조건에 맞는 원두가 없어요 — <button type="button" class="fmore" data-fclear>필터 모두 해제</button></p>'; return; }
     if (!pool.length) { box.innerHTML = '<p class="empty">지금 판매 중인 원두가 없어요</p>'; return; }
-    if (!list.length) { box.innerHTML = `<p class="empty">${S.filter === 'special' ? '지금은 스페셜 원두가 없어요' : '최근 7일 안에 올라온 원두가 없어요'}</p>`; return; }
+    if (!list.length) { box.innerHTML = `<p class="empty">${fCount() ? '조건에 맞는 ' + (S.filter === 'special' ? '스페셜 원두가' : '새 원두가') + ' 없어요' : S.filter === 'special' ? '지금은 스페셜 원두가 없어요' : '최근 7일 안에 올라온 원두가 없어요'}</p>`; return; }
     if (S.focus && !S.focusDone) {   // 공유 링크로 연 원두는 '더 보기' 뒤에 있어도 그려 둠
       const i = list.findIndex((x) => x.key === S.focus);
       if (i >= S.limit) S.limit = Math.ceil((i + 1) / PAGE) * PAGE;
@@ -595,6 +690,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   }
   const slim = (d) => Object.assign({}, d, { items: d.items.map((x) => {   // 기기에는 목록만 저장 (설명·번역은 매번 새로)
     const y = Object.assign({}, x);
+    delete y._fc;   // 필터용 계산값은 저장하지 않음
     if ('text' in y) { y.hasText = hasT(y.text); delete y.text; }
     return y;
   }) });
@@ -695,6 +791,16 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     if (t.dataset.filter) { S.filter = t.dataset.filter; S.limit = PAGE; store.set('filter', S.filter); render(); }
     else if (t.dataset.vendor) { S.vendor = t.dataset.vendor; S.limit = PAGE; render(); }
     else if (t.id === 'moreBtn') { S.limit += PAGE; render(); }
+    else if (t.id === 'fBtn') { S.fOpen = !S.fOpen; render(); }
+    else if (t.dataset.fopt || t.dataset.fdel) {
+      const [g, x] = (t.dataset.fopt || t.dataset.fdel).split('\t');
+      if (S.f[g].has(x)) S.f[g].delete(x); else S.f[g].add(x);
+      if (g === 'cty' && !S.f.cty.has(x)) [...S.f.top].forEach((k) => { if (k.split('|')[0] === x) S.f.top.delete(k); });   // 나라를 빼면 그 나라 주 산지도
+      S.limit = PAGE; saveF(); render();
+    }
+    else if (t.hasAttribute('data-fclear')) { F_GROUPS.forEach(([g]) => S.f[g].clear()); S.limit = PAGE; saveF(); render(); }
+    else if (t.hasAttribute('data-fclose')) { S.fOpen = false; render(); const l = $('#list'); if (l) l.scrollIntoView({ block: 'start' }); }
+    else if (t.hasAttribute('data-fmore')) { S.fAllVar = true; render(); }
     else if (t.id === 'reload') load();
     else if (t.dataset.closeCopy) { const box = t.closest('.copybox'); if (box) box.remove(); }
     else if (t.dataset.share) { const it = find(t.dataset.share); if (it) shareIt(it, t); }
