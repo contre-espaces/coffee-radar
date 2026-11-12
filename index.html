@@ -260,6 +260,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
         <li><b>맛 노트 색</b>: 비슷한 맛끼리 같은 색이에요 — <span class="legend"><span data-f="berry">베리·붉은 과일</span><span data-f="citrus">시트러스</span><span data-f="fruit">과일</span><span data-f="floral">꽃</span><span data-f="sweet">단맛·초콜릿·견과</span><span data-f="other">차·와인·향신료 등</span></span></li>
         <li><b>가격</b>: 한국에서 주문할 때 가격이에요(배송비 별도). 외화로 파는 곳은 원화로 바꾼 금액(≈₩)을 먼저, 현지 가격은 옆에 적어 둬요.</li>
         <li><b>100g당 가격</b>: 용량을 g으로 맞추고(8oz → 227g) 250g에 가장 가까운 용량으로 계산해요. 정렬에서 싼 순·비싼 순으로 볼 수 있어요.</li>
+        <li><b>산지·품종·가공</b>: 로스터리마다 다르게 쓰는 표기를 한 가지로 맞췄어요 — 산지는 나라 · 주 산지, 그 아래 세부 지역(큰 곳 → 작은 곳), 품종은 영어 표준 이름(세부 계통은 괄호), 가공은 기본 가공 · 발효 방식. 로스터리가 쓴 원래 표기는 상세정보에 있어요.</li>
         <li><b>가공 과정·제품 설명</b>: 원문을 구글 번역으로 옮긴 거예요. 어색하면 상세정보의 '원문 보기'로 확인하세요.</li>
         <li><b>품절</b> 원두는 목록 맨 뒤에 모아 둬요.</li>
       </ul>
@@ -411,9 +412,21 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   }
   // 디카페인·코퍼먼트(과일 등과 함께 발효·인퓨즈드): 가공 칸이나 상품명에 표기가 있을 때만
   const attrsOf = (it) => { const t = [it.process, it.title].join(' '); const a = [];
-    if (/decaf/i.test(t)) a.push('디카페인');
-    if (/co-?ferment|infus/i.test(t)) a.push('코퍼먼트');
+    if (it.decaf !== undefined ? it.decaf : /decaf/i.test(t)) a.push('디카페인');
+    if (it.cof !== undefined ? it.cof : /co-?ferment|infus/i.test(t)) a.push('코퍼먼트');
     return a; };
+  // 표준 표기 (나라 · 주 산지 / 세부 / 품종 / 가공) — 예전 저장본처럼 표준 칸이 없으면 원문으로
+  const varsText = (it) => (Array.isArray(it.vars) && it.vars.length ? it.vars.map((x) => (x.s ? `${x.n} (${x.s})` : x.n)).join(' · ') : (it.variety || ''));
+  const procText = (it) => it.procKo || it.process || '';
+  const topOf = (it) => it.regionTop || '';
+  const subOf = (it) => (Array.isArray(it.regionSub) ? it.regionSub.join(' · ') : (it.region || ''));
+  const originText = (it) => [it.countryKo, topOf(it)].filter(Boolean).join(' · ');
+  const sameKey = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+(?:and|&)\s+|[·,\/&+]/g, ',').replace(/[\s-]+/g, '');
+  const PLAIN_PROC = /^(?:fully |classic |traditional )?(?:washed|natural|honey)(?: process(?:ed)?)?$/i;   // 번역만 다른 기본 가공은 원문을 따로 안 보여 줌
+  const rawOf = (it) => [   // 상세정보: 표준 표기와 다른 원문
+    ['산지 원문', it.region && sameKey(it.region) !== sameKey([topOf(it), subOf(it)].filter(Boolean).join(',')) ? it.region : ''],
+    ['품종 원문', it.variety && sameKey(it.variety) !== sameKey(varsText(it)) ? it.variety : ''],
+    ['가공 원문', it.process && it.procKo && it.procKo !== it.process && !(PLAIN_PROC.test(it.process.trim()) && !/[·\/]/.test(it.procKo)) ? it.process : '']];
   const plain = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
   const origTitle = (it) => (it.title && plain(it.title) !== plain(it.producer) ? it.title : '');
   function markCut(root) {   // 한 줄을 넘는 산지·품종·가공 칸만 … + 누르면 펼침
@@ -439,9 +452,9 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     const s = basisOf(it), unit = unitText(it);
     const sizes = (it.sizes || []).map((x) => esc(sizeLine(x, it.currency))).join('<br>');
     const orig = origTitle(it);   // 줄인 이름이면 원래 상품명 (사이트에서 찾을 때)
-    const spec = [['상품명', esc(orig)], ['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].filter((x) => x[1]);
-    const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(it.region || '')].filter(Boolean).join(' ');
-    const facts = [['산지', place], ['품종', esc(it.variety)], ['가공', esc(it.process)]].filter((x) => x[1]);
+    const spec = [['상품명', esc(orig)], ['고도', esc(it.altitude)], ['수확', esc(it.harvest)], ['용량', sizes]].concat(rawOf(it).map(([a, x]) => [a, esc(x)])).filter((x) => x[1]);
+    const place = [it.countryKo ? `<span class="country">${esc(it.countryKo)}</span>` : '', esc(topOf(it))].filter(Boolean).join(' · ');
+    const facts = [['산지', place], ['세부', esc(subOf(it))], ['품종', esc(varsText(it))], ['가공', esc(procText(it))]].filter((x) => x[1]);
     const k = esc(it.key);
     return `<article class="coffee${it.special ? ' is-hot' : ''}${it.available ? '' : ' is-out'}${it.stale ? ' stale' : ''}" data-key="${k}">
       <div class="c-main">
@@ -621,8 +634,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   function shareText(it) {
     const v = vendorOf(it.vendor), s = basisOf(it), unit = unitText(it);
     const header = it.special ? `☕ ${v.short} 스페셜 원두` : `☕ ${v.short} 원두`;   // ☕는 텔레그램·X·Threads 글머리와 맞춤
-    const title = nameOf(it) + (it.countryKo ? ` (${it.countryKo})` : '');
-    const info = [it.variety, it.process].filter(Boolean).join(' · ');
+    const title = nameOf(it) + (originText(it) ? ` (${originText(it)})` : '');
+    const info = [varsText(it), procText(it)].filter(Boolean).join(' / ');
     const top = [header, title, info, (it.notes || []).join('·')].filter(Boolean).join('\n');
     const price = (s ? sizeLine(Object.assign({}, s, { available: true }), it.currency) : '') + (unit ? (s ? '\n' : '') + unit : '');
     return [top, price, it.url].filter(Boolean).join('\n\n');
