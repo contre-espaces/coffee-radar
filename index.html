@@ -11,6 +11,8 @@
 <meta property="og:description" content="지금 판매 중인 원두와 스페셜 원두를 한눈에 확인하세요.">
 <meta property="og:url" content="https://coffee.inbeom.com/">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#F2F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1311" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'%3E%3Cstyle%3Esvg%7Bcolor:%232C6647%7D@media (prefers-color-scheme:dark)%7Bsvg%7Bcolor:%2382C7A1%7D%7D%3C/style%3E%3Ccircle cx='12' cy='12' r='9.25'/%3E%3Ccircle cx='12' cy='12' r='5' stroke-opacity='.5'/%3E%3Cpath d='M12 12 18.5 5.5'/%3E%3Ccircle cx='16.25' cy='13.75' r='1.75' fill='currentColor' stroke='none'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,6 +50,10 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 v
 [hidden] { display: none !important; }
 :focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
 button, a { -webkit-tap-highlight-color: transparent; }
+button, a, select, summary, [role="button"] { touch-action: manipulation; }   /* 두 번 눌러 확대 지연 없이 */
+#beans, #guide { scroll-margin-top: 16px; }
+.skip { position: absolute; left: 16px; top: -100px; z-index: 10; padding: 10px 16px; border-radius: 10px; background: var(--ink); color: var(--panel); font: 500 14px/1 var(--f-body); text-decoration: none; }
+.skip:focus { top: 12px; }   /* 키보드로 처음 Tab을 누르면 보이는 '목록으로 건너뛰기' */
 button { font-family: inherit; }
 
 .wrap {
@@ -214,7 +220,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .vtabs { display: flex; flex-wrap: nowrap; gap: 8px; margin-top: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }   /* 휴대폰: 업체 칩은 옆으로 넘기는 한 줄 */
 .vtabs::-webkit-scrollbar { display: none; }
 .vtab { flex: none; }
-.wrap > section { min-width: 0; }   /* 한 줄 칩이 화면보다 길어도 페이지는 넓어지지 않게 */
+.wrap > section { min-width: 0; }
+#beans:focus { outline: none; }   /* 건너뛰기 도착점: 칸 전체 테두리 대신 다음 Tab부터 표시 */   /* 한 줄 칩이 화면보다 길어도 페이지는 넓어지지 않게 */
 @media (min-width: 720px) {
   .vtabs { flex-wrap: wrap; overflow: visible; }
   .vtabs.clamp { max-height: 82px; overflow: hidden; }   /* PC: 업체 칩은 두 줄까지, 나머지는 '모두 보기'로 — 원두 목록이 첫 화면에 보이게 */
@@ -264,6 +271,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 </style>
 </head>
 <body>
+<a class="skip" href="#beans">원두 목록으로 건너뛰기</a>
 <main class="wrap">
   <header class="top">
     <div class="mast">
@@ -274,13 +282,13 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     <p class="note" id="note" role="status" hidden></p>
   </header>
 
-  <section aria-label="지금 판매 중인 원두">
+  <section id="beans" tabindex="-1" aria-label="지금 판매 중인 원두">
     <div class="tabs" role="group" aria-label="보기 필터">
       <button type="button" class="tab" data-filter="all" aria-pressed="true">전체<b id="cntAll">–</b></button>
       <button type="button" class="tab" data-filter="special" aria-pressed="false">스페셜<b id="cntSpecial">–</b></button>
       <button type="button" class="tab" data-filter="new" aria-pressed="false">NEW<b id="cntNew">–</b></button>
     </div>
-    <div class="vtabs" id="vtabs" role="group" aria-label="업체 필터" hidden></div>
+    <div class="vtabs" id="vtabs" role="group" aria-label="업체 필터" translate="no" hidden></div>
     <button type="button" class="vmore" id="vMore" aria-expanded="false" aria-controls="vtabs" hidden></button>
     <div class="sortbar"><div class="fbar"><button type="button" class="fbtn" id="fBtn" aria-expanded="false" aria-controls="fPanel">필터</button><div class="fchips" id="fChips" role="group" aria-label="고른 필터"></div></div><label for="sort">정렬</label><select id="sort"><option value="new">최신순</option><option value="cheap">100g당 싼 순</option><option value="pricey">100g당 비싼 순</option></select></div>
     <div class="fpanel" id="fPanel" role="region" aria-label="필터" hidden></div>
@@ -311,7 +319,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     </section>
     <section class="m-block">
       <h2 id="rTitle">지켜보는 로스터리</h2>
-      <ul class="roasters" id="roasters"><li>불러오는 중…</li></ul>
+      <ul class="roasters" id="roasters" translate="no"><li>불러오는 중…</li></ul>
       <p id="rScope">필터용 싱글 오리진만 모아요 — 블렌드·에스프레소용·세트·구독 상품은 빼요</p>
     </section>
     <section class="m-block">
@@ -346,7 +354,23 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   if (f0 === 'special' || f0 === 'new') S.filter = f0;
   const s0 = store.get('sort');
   if (s0 === 'cheap' || s0 === 'pricey') S.sort = s0;
-  try { S.focus = new URLSearchParams(location.search).get('item'); } catch (e) { S.focus = null; }
+  let Q = null; try { Q = new URLSearchParams(location.search); } catch (e) { Q = null; }
+  S.focus = Q ? Q.get('item') : null;
+  if (Q) {   // 주소의 보기·업체·정렬이 저장된 값보다 먼저 (?view=special&roaster=loquat&sort=cheap)
+    const qv = Q.get('view'), qs = Q.get('sort'), qr = Q.get('roaster');
+    if (qv === 'all' || qv === 'special' || qv === 'new') S.filter = qv;
+    if (qs === 'new' || qs === 'cheap' || qs === 'pricey') S.sort = qs;
+    if (qr) S.vendor = qr;   // 없는 업체면 render에서 '모든 업체'로
+  }
+  function syncURL() {   // 지금 보기를 주소에 남김 — 복사해 보내거나 뒤로 가도 같은 화면
+    try {
+      const q = new URLSearchParams(location.search);
+      const set = (k, v, d) => { if (v && v !== d) q.set(k, v); else q.delete(k); };
+      set('view', S.filter, 'all'); set('roaster', S.vendor, 'all'); set('sort', S.sort, 'new');
+      const qs = q.toString(), url = location.pathname + (qs ? '?' + qs : '') + location.hash;
+      if (url !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', url);
+    } catch (e) {}
+  }
   if (S.focus) { S.filter = 'all'; S.open.add(S.focus); }
   else { const f1 = store.get('f'); if (f1 && typeof f1 === 'object') Object.keys(S.f).forEach((g) => { if (Array.isArray(f1[g])) f1[g].forEach((x) => S.f[g].add(String(x))); }); }   // 공유 링크로 연 원두는 필터 없이
 
@@ -497,8 +521,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   }
   function logoHTML(v) {   // 업체 공식 로고(서버가 업체 사이트에서 받아 둔 것) — 없거나 깨지면 약칭 배지
     const src = String(v.logo || '');
-    if (/^data:image\/svg\+xml/i.test(src)) return `<span class="vlogo"><img class="vimg" src="${esc(src)}" alt="${esc(v.name)}" data-short="${esc(v.short)}"></span>`;
-    if (/^https:\/\//i.test(src)) return `<span class="vlogo icon"><img class="vimg" src="${esc(src)}" alt="${esc(v.name)}" data-short="${esc(v.short)}" referrerpolicy="no-referrer"></span>`;
+    if (/^data:image\/svg\+xml/i.test(src)) return `<span class="vlogo"><img class="vimg" src="${esc(src)}" alt="${esc(v.name)}" data-short="${esc(v.short)}" height="12" decoding="async"></span>`;
+    if (/^https:\/\//i.test(src)) return `<span class="vlogo icon"><img class="vimg" src="${esc(src)}" alt="${esc(v.name)}" data-short="${esc(v.short)}" width="24" height="24" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>`;
     return `<span class="vlogo"><span class="mono">${esc(v.short)}</span></span>`;
   }
   const hasT = (t) => !!(t && (t.procKo || t.descKo || t.procEn || t.descEn));
@@ -567,11 +591,11 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     return `<article class="coffee${it.special ? ' is-hot' : ''}${it.available ? '' : ' is-out'}${it.stale ? ' stale' : ''}" data-key="${k}">
       <div class="c-main">
       <div class="c-top">
-        <span class="vbadge">${logoHTML(v)}<span class="vname">${esc(v.name)}</span></span>
+        <span class="vbadge">${logoHTML(v)}<span class="vname" translate="no">${esc(v.name)}</span></span>
         ${flags.length ? `<div class="flags">${flags.join('')}</div>` : ''}
       </div>
-      <h2 class="producer${String(it.producer || '').length > 28 ? ' long' : ''}">${esc(it.producer)}</h2>
-      ${it.farm ? `<p class="farm">${esc(it.farm)}</p>` : ''}
+      <h2 class="producer${String(it.producer || '').length > 28 ? ' long' : ''}" translate="no">${esc(it.producer)}</h2>
+      ${it.farm ? `<p class="farm" translate="no">${esc(it.farm)}</p>` : ''}
       ${it.notes && it.notes.length ? `<ul class="notes" aria-label="맛 노트">${it.notes.map((n) => `<li data-f="${noteFamily(n)}">${esc(n)}</li>`).join('')}</ul>` : ''}
       ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => { const f = it.key + '|' + a, on = S.facts.has(f);
         return `<div><dt>${a}</dt><dd data-f="${esc(f)}"${on ? ' class="cut open" tabindex="0" role="button" aria-expanded="true"' : ''}>${x}</dd></div>`; }).join('')}</dl>` : ''}
@@ -609,6 +633,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     } else { vt.hidden = true; S.vendor = 'all'; }
     clampChips();
     fadeChips();
+    syncURL();
     const inVendor = S.data.items.filter((it) => S.vendor === 'all' || it.vendor === S.vendor);
     renderFilter(inVendor.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true)));
     const pool = inVendor.filter((it) => fPass(it));
