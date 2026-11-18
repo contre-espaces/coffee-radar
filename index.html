@@ -27,6 +27,8 @@
   --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --ext: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E");
+  --sel-chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2357625B' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -35,11 +37,13 @@
     --leaf: #82C7A1; --leaf-soft: #1B2D23; --warn: #E9B65C; --warn-soft: #32260F;
     --chip: #202924; --hot: #E77C82; --logo-bg: #E3E9E4;   /* 어두운 화면의 로고 칸은 순백 대신 글자색 */
     --n-berry: #E8899A; --n-citrus: #E2C15A; --n-fruit: #EFA06A; --n-floral: #CFA3D3; --n-sweet: #CDA585; --n-other: #8EBCC0;
+    --sel-chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A0ABA3' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--rule) var(--bg); accent-color: var(--leaf); caret-color: var(--leaf); }
+::selection { background: color-mix(in srgb, var(--leaf) 28%, transparent); color: var(--ink); }   /* 고른 글자·커서·스크롤바도 화면 색으로 */
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
@@ -59,6 +63,7 @@ h1 { margin: 0; display: flex; align-items: center; gap: 12px; font: 500 clamp(2
 h1 .mark { flex: none; width: 0.9em; height: 0.9em; color: var(--leaf); }   /* 레이더 표시 (이모지 대신 선 하나 색 하나) */
 .statusline { margin: 0; font-size: 14px; line-height: 20px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .statusline .live { color: var(--leaf); font-weight: 500; }
+.statusline .seg { white-space: nowrap; }   /* "11.18 22:51 기준"이 줄 끝에서 갈라지지 않게 */
 .statusline .bad { color: var(--warn); }
 .btn, .ghost, .tab, .vtab, .order, .sortbar select, .fbtn, .fopt, .fchip { transition: background-color .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease), transform .16s var(--ease); }
 .btn { font: 500 14px/1 var(--f-body); min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--leaf); background: transparent; color: var(--leaf); cursor: pointer; white-space: nowrap; }
@@ -148,7 +153,9 @@ h1 .mark { flex: none; width: 0.9em; height: 0.9em; color: var(--leaf); }   /* �
 .fopt.zero { opacity: .5; }
 .fmore { font: 500 14px/1 var(--f-body); min-height: 36px; padding: 0 8px; border: 0; background: none; color: var(--leaf); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .factions { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 12px; }
-.sortbar select { font: 500 14px/1.2 var(--f-body); min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+.sortbar select { font: 500 14px/1.2 var(--f-body); min-height: 36px; padding: 0 36px 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel) var(--sel-chev) right 10px center / 16px no-repeat; color: var(--ink); cursor: pointer; -webkit-appearance: none; appearance: none; }
+.ext { flex: none; display: inline-block; width: 14px; height: 14px; background: currentColor; -webkit-mask: var(--ext) center / 14px no-repeat; mask: var(--ext) center / 14px no-repeat; }   /* 새 창 표시 (글자 ↗ 대신 선 아이콘) */
+.memo .sns-links a { display: inline-flex; align-items: center; gap: 4px; }
 .order { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 10px; background: var(--leaf); color: var(--panel); text-decoration: none; font-weight: 500; font-size: 15px; white-space: nowrap; }
 details.more { margin-top: 16px; border-top: 1px solid var(--rule); }
 details.more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 4px; min-height: 48px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
@@ -178,7 +185,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 /* 하단 안내: 보는 법 · 새 원두 알림(텔레그램·X·Threads) · 지켜보는 로스터리 · 데이터 안내 (PC 2열) */
 .memo { border-top: 1px solid var(--rule); padding-top: 20px; color: var(--ink-2); font-size: 14px; line-height: 1.65; display: grid; gap: 24px; }
 .m-block { display: grid; gap: 8px; align-content: start; min-width: 0; }
-.memo h2 { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--ink); }
+.memo h2 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; color: var(--ink); }   /* 본문 14px보다 한 단계 분명하게 */
 .memo p { margin: 0; }
 .memo ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
 .memo b { color: var(--ink); font-weight: 500; }
@@ -208,7 +215,14 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .vtabs::-webkit-scrollbar { display: none; }
 .vtab { flex: none; }
 .wrap > section { min-width: 0; }   /* 한 줄 칩이 화면보다 길어도 페이지는 넓어지지 않게 */
-@media (min-width: 720px) { .vtabs { flex-wrap: wrap; overflow: visible; } }
+@media (min-width: 720px) {
+  .vtabs { flex-wrap: wrap; overflow: visible; }
+  .vtabs.clamp { max-height: 82px; overflow: hidden; }   /* PC: 업체 칩은 두 줄까지, 나머지는 '모두 보기'로 — 원두 목록이 첫 화면에 보이게 */
+}
+.vmore { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; min-height: 36px; padding: 0 4px; border: 0; background: none; font: 500 14px/1 var(--f-body); color: var(--ink-2); cursor: pointer; }
+.vmore::after { content: ""; width: 14px; height: 14px; background: currentColor; -webkit-mask: var(--chev) center / 14px no-repeat; mask: var(--chev) center / 14px no-repeat; transition: transform .16s var(--ease); }
+.vmore[aria-expanded="true"]::after { transform: rotate(180deg); }
+@media (hover: hover) { .vmore:hover { color: var(--ink); } }
 .vtab { display: inline-flex; align-items: center; gap: 6px; font: 500 14px/1 var(--f-body); min-height: 36px; padding: 0 12px 0 6px; border-radius: 10px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
 .vtab .vlogo { height: 24px; min-width: 24px; border-radius: 4px; }   /* 칸 모서리 10 − 안쪽 여백 6 */
 .vtab .vlogo.icon { width: 24px; }
@@ -267,6 +281,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       <button type="button" class="tab" data-filter="new" aria-pressed="false">NEW<b id="cntNew">–</b></button>
     </div>
     <div class="vtabs" id="vtabs" role="group" aria-label="업체 필터" hidden></div>
+    <button type="button" class="vmore" id="vMore" aria-expanded="false" aria-controls="vtabs" hidden></button>
     <div class="sortbar"><div class="fbar"><button type="button" class="fbtn" id="fBtn" aria-expanded="false" aria-controls="fPanel">필터</button><div class="fchips" id="fChips" role="group" aria-label="고른 필터"></div></div><label for="sort">정렬</label><select id="sort"><option value="new">최신순</option><option value="cheap">100g당 싼 순</option><option value="pricey">100g당 비싼 순</option></select></div>
     <div class="fpanel" id="fPanel" role="region" aria-label="필터" hidden></div>
     <div id="list" class="list"><p class="empty">불러오는 중…</p></div>
@@ -290,9 +305,9 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
     <section class="m-block">
       <h2>새 원두 알림 받기</h2>
       <p>새 원두가 올라오면 텔레그램으로 바로 알려드려요. 봇 대화창에서 '시작'을 누르면 받기 시작하고, /stop 을 보내면 멈춰요.</p>
-      <a class="tg-link" href="https://t.me/tastingwirebot" target="_blank" rel="noopener">@tastingwirebot 열기 <span aria-hidden="true">↗</span></a>
+      <a class="tg-link" href="https://t.me/tastingwirebot" target="_blank" rel="noopener">@tastingwirebot 열기 <span class="ext" aria-hidden="true"></span></a>
       <p>같은 소식을 X·Threads에도 바로 올려요 — 원두 사진·산지·가격·상품 링크까지.</p>
-      <p class="sns-links"><a href="https://x.com/tastingwire" target="_blank" rel="noopener">X @tastingwire ↗</a><a href="https://www.threads.com/@tastingwire" target="_blank" rel="noopener">Threads @tastingwire ↗</a></p>
+      <p class="sns-links"><a href="https://x.com/tastingwire" target="_blank" rel="noopener">X @tastingwire<span class="ext" aria-hidden="true"></span></a><a href="https://www.threads.com/@tastingwire" target="_blank" rel="noopener">Threads @tastingwire<span class="ext" aria-hidden="true"></span></a></p>
     </section>
     <section class="m-block">
       <h2 id="rTitle">지켜보는 로스터리</h2>
@@ -473,7 +488,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       const down = vendors().filter((v) => !v.ok).map((v) => v.short);
       const tail = S.loading ? ' · 새로 불러오는 중…' : S.error ? ' · <span class="bad">새로 불러오기 실패</span>' : '';
       const on = d.items.filter((x) => x.available).length, out = d.items.length - on;
-      el.innerHTML = (S.fromCache ? `저장된 정보 · ${esc(when)}` : `<span class="live">● 최신</span> · 판매 중 ${on}종${out ? ` · 품절 ${out}종` : ''} · ${esc(when)}`)
+      const seg = (x) => `<span class="seg">${x}</span>`;
+      el.innerHTML = (S.fromCache ? `${seg('저장된 정보')} · ${seg(esc(when))}` : `<span class="live">● 최신</span> · ${seg(`판매 중 ${on}종`)}${out ? ` · ${seg(`품절 ${out}종`)}` : ''} · ${seg(esc(when))}`)
         + (down.length ? ` · <span class="bad">${esc(down.join('·'))} 이전 정보</span>` : '') + tail;
     }
     $('#reload').disabled = S.loading;
@@ -562,7 +578,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       </div>
       <div class="c-buy">
         <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
-        <div class="buy-act share"><button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span aria-hidden="true">↗</span></a></div>
+        <div class="buy-act share"><button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span class="ext" aria-hidden="true"></span></a></div>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
         <summary>상세정보</summary>
@@ -588,9 +604,10 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       const base = S.data.items.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true) && fPass(it));   // 업체 칩 숫자: 지금 보기(전체·스페셜·NEW)·필터 기준
       const n = {}; base.forEach((it) => { n[it.vendor] = (n[it.vendor] || 0) + 1; });
       vt.innerHTML = `<button type="button" class="vtab all" data-vendor="all" aria-pressed="${S.vendor === 'all'}">모든 업체<b>${base.length}</b></button>`
-        + vs.map((v) => `<button type="button" class="vtab${v.logo ? '' : ' all'}${n[v.id] ? '' : ' zero'}" data-vendor="${esc(v.id)}" aria-pressed="${S.vendor === v.id}">${v.logo ? logoHTML(v) : ''}${esc(v.short)}<b>${n[v.id] || 0}</b></button>`).join('');
+        + vs.map((v) => `<button type="button" class="vtab${v.logo ? '' : ' all'}${n[v.id] ? '' : ' zero'}" data-vendor="${esc(v.id)}" data-short="${esc(v.short)}" aria-pressed="${S.vendor === v.id}">${v.logo ? logoHTML(v) : ''}${esc(v.short)}<b>${n[v.id] || 0}</b></button>`).join('');
       vt.hidden = false;
     } else { vt.hidden = true; S.vendor = 'all'; }
+    clampChips();
     fadeChips();
     const inVendor = S.data.items.filter((it) => S.vendor === 'all' || it.vendor === S.vendor);
     renderFilter(inVendor.filter((it) => (S.filter === 'special' ? it.special : S.filter === 'new' ? it.isNew : true)));
@@ -622,6 +639,21 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
       out = has.concat(none);
     }
     return out.filter((it) => it.available).concat(out.filter((it) => !it.available));
+  }
+  function clampChips() {   // PC: 두 줄 넘는 업체 칩은 접어 둠 — 접힌 줄의 업체를 고르면 펼친 채로
+    const vt = $('#vtabs'), btn = $('#vMore');
+    vt.classList.remove('clamp');
+    const wide = matchMedia('(min-width: 720px)').matches;
+    const chips = [...vt.children], top0 = chips.length ? chips[0].offsetTop : 0;
+    const hidden = wide && !vt.hidden ? chips.filter((c) => c.offsetTop - top0 > 50) : [];
+    if (!hidden.length) { btn.hidden = true; return; }
+    if (S.vSeen !== S.vendor && hidden.some((c) => c.getAttribute('aria-pressed') === 'true')) S.vOpen = true;   // 새로 고른 업체만 (접기를 누르면 접힘)
+    S.vSeen = S.vendor;
+    btn.hidden = false;
+    btn.setAttribute('aria-expanded', String(!!S.vOpen));
+    const picked = hidden.find((c) => c.getAttribute('aria-pressed') === 'true');   // 접힌 줄에 고른 업체가 있으면 이름을 같이
+    btn.textContent = S.vOpen ? '업체 접기' : `업체 ${hidden.length}곳 더 보기` + (picked ? ` · ${picked.dataset.short || ''} 보는 중` : '');
+    vt.classList.toggle('clamp', !S.vOpen);
   }
   function fadeChips() {   // 업체 칩 줄이 옆으로 넘칠 때만 가장자리 흐림 (PC는 여러 줄이라 없음)
     const vt = $('#vtabs');
@@ -807,7 +839,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
   });
   $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; S.limit = PAGE; store.set('sort', S.sort); render(); });
   $('#vtabs').addEventListener('scroll', fadeChips, { passive: true });
-  addEventListener('resize', () => { fadeChips(); clearTimeout(markCut.t); markCut.t = setTimeout(() => markCut($('#list')), 150); });
+  $('#vMore').addEventListener('click', () => { S.vOpen = !S.vOpen; clampChips(); });
+  addEventListener('resize', () => { clampChips(); fadeChips(); clearTimeout(markCut.t); markCut.t = setTimeout(() => markCut($('#list')), 150); });
   document.addEventListener('keydown', (e) => {
     const dd = e.target.closest && e.target.closest('.facts dd.cut');
     if (dd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleFact(dd); }
