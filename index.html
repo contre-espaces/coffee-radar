@@ -11,12 +11,12 @@
 <meta property="og:description" content="지금 판매 중인 원두와 스페셜 원두를 한눈에 확인하세요.">
 <meta property="og:url" content="https://coffee.inbeom.com/">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="theme-color" content="#F2F4F1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F1311" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'%3E%3Cstyle%3Esvg%7Bcolor:%232C6647%7D@media (prefers-color-scheme:dark)%7Bsvg%7Bcolor:%2382C7A1%7D%7D%3C/style%3E%3Ccircle cx='12' cy='12' r='9.25'/%3E%3Ccircle cx='12' cy='12' r='5' stroke-opacity='.5'/%3E%3Cpath d='M12 12 18.5 5.5'/%3E%3Ccircle cx='16.25' cy='13.75' r='1.75' fill='currentColor' stroke='none'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f6e8da" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2a160c" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'%3E%3Cstyle%3Esvg%7Bcolor:%23aa2d00%7D@media (prefers-color-scheme:dark)%7Bsvg%7Bcolor:%23fcab79%7D%7D%3C/style%3E%3Ccircle cx='12' cy='12' r='9.25'/%3E%3Ccircle cx='12' cy='12' r='5' stroke-opacity='.5'/%3E%3Cpath d='M12 12 18.5 5.5'/%3E%3Ccircle cx='16.25' cy='13.75' r='1.75' fill='currentColor' stroke='none'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=Schibsted+Grotesk:wght@600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Space+Grotesk:wght@400;500&family=Noto+Sans+KR:wght@400;500;600&display=swap">
 <style>
 /* 화면 정리: unslop by Damir Sokolovsky (@heydamir), CC BY 4.0 — 4px 간격, 굵기 400~600, 모서리는 크기별, 강조색 하나 + 맛 노트만 계열 색 */
 :root {
@@ -268,6 +268,124 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .copybox textarea { width: 100%; min-height: 150px; font: 400 15px/1.55 var(--f-body); padding: 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); resize: vertical; }
 .copybox .ghost { justify-self: start; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
+/* ===== TTCC 통일 스킨 (ttcc.inbeom.com과 같은 요소) =====
+   글꼴: Inter + Noto Sans KR (제목 한 줄은 Space Grotesk) · 색: Airtable 시그니처(코랄·복숭아·민트·노랑·크림)
+   표면: 따뜻한 커피색 그라데이션 위 반투명 유리 · 컴포넌트: shadcn 구조(Card·Badge·Button·Toggle·Input) */
+:root {
+  --bg: #f3e3d3; --panel: #fffaf5; --ink: #1c1712; --ink-2: #574b43; --ink-3: #6f6359; --rule: rgba(28,23,18,.12);
+  --leaf: #aa2d00; --leaf-soft: rgba(170,45,0,.10); --warn: #8f4a00; --warn-soft: rgba(244,211,94,.42);
+  --chip: rgba(255,255,255,.5); --hot: #aa2d00; --logo-bg: #ffffff;
+  --n-berry: #f4a0b4; --n-citrus: #f4d35e; --n-fruit: #fcab79; --n-floral: #d4b8ec; --n-sweet: #e8c79e; --n-other: #a8d8c4;
+  --f-display: "Inter", "Noto Sans KR", system-ui, sans-serif;
+  --f-body: "Inter", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --glass: rgba(255,250,245,.58); --glass-strong: rgba(255,250,245,.88); --glass-sub: rgba(255,255,255,.45);
+  --glass-edge: rgba(255,255,255,.75); --glass-hi: inset 0 1px 0 rgba(255,255,255,.85);
+  --glass-shadow: 0 1px 2px rgba(90,40,10,.06), 0 12px 32px -8px rgba(120,50,15,.22);
+  --primary: #1c1712; --on-primary: #fffaf5; --peach: #fcab79; --sig-ink: #1c1712;
+  --bg-art: radial-gradient(60% 45% at 12% 8%, #fcd2ae 0%, transparent 70%),
+            radial-gradient(55% 40% at 95% 22%, #f39a63 0%, transparent 72%),
+            radial-gradient(70% 50% at 20% 80%, #e9b68e 0%, transparent 70%),
+            radial-gradient(60% 45% at 90% 95%, #d9784a 0%, transparent 70%),
+            linear-gradient(180deg, #f6e8da 0%, #efd3bb 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e120b; --panel: #1c1009; --ink: #fbf3ec; --ink-2: #d7c6b8; --ink-3: #b9a595; --rule: rgba(255,255,255,.12);
+    --leaf: #fcab79; --leaf-soft: rgba(252,171,121,.16); --warn: #f4d35e; --warn-soft: rgba(244,211,94,.14);
+    --chip: rgba(255,236,220,.08); --hot: #fcab79; --logo-bg: #fbf3ec;
+    --glass: rgba(255,236,220,.08); --glass-strong: rgba(36,18,9,.82); --glass-sub: rgba(255,236,220,.06);
+    --glass-edge: rgba(255,255,255,.16); --glass-hi: inset 0 1px 0 rgba(255,255,255,.14);
+    --glass-shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px -12px rgba(0,0,0,.6);
+    --primary: #fff6ee; --on-primary: #1c1009;
+    --bg-art: radial-gradient(60% 40% at 15% 6%, #7a3a17 0%, transparent 72%),
+              radial-gradient(55% 40% at 95% 30%, #a2481b 0%, transparent 70%),
+              radial-gradient(70% 50% at 10% 85%, #4a2312 0%, transparent 70%),
+              radial-gradient(60% 45% at 85% 95%, #6b2c10 0%, transparent 72%),
+              linear-gradient(180deg, #2a160c 0%, #170d08 100%);
+  }
+}
+html { background: var(--bg); }
+body { background: transparent; font: 400 16px/1.55 var(--f-body); font-optical-sizing: auto; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--bg-art), var(--bg); }
+::selection { background: var(--peach); color: #1c1712; }
+
+/* 유리 표면 */
+.top, .coffee, .fpanel, .memo, .note, .tab, .vtab, .fbtn, .fopt, .fchip, .ghost, .btn, .sortbar select, .copybox textarea, .memo a.tg-link {
+  background-color: var(--glass); border: 1px solid var(--glass-edge); box-shadow: var(--glass-hi), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+}
+.tab, .vtab, .fbtn, .fopt, .fchip, .ghost, .btn, .sortbar select, .memo a.tg-link { background-color: var(--glass-sub); box-shadow: var(--glass-hi); }
+
+/* 머리: 떠 있는 유리 막대 (TTCC 상단바와 같은 모양) */
+.top { position: sticky; top: 8px; z-index: 6; padding: 12px 12px 12px 16px; border-radius: 20px; background-color: var(--glass-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(170%); backdrop-filter: blur(28px) saturate(170%); }
+h1 { font: 500 clamp(22px, 5.6vw, 28px)/1.2 "Space Grotesk", var(--f-body); letter-spacing: -0.01em; }
+h1 .mark { color: var(--leaf); }
+.statusline { color: var(--ink-2); }
+.statusline .live { color: var(--leaf); }
+#beans, #guide { scroll-margin-top: 140px; }
+
+/* 버튼: shadcn default(진한 잉크) · outline(유리) */
+.btn { color: var(--primary); border-radius: 12px; }
+.ghost { color: var(--primary); border-radius: 12px; }
+.order { border-radius: 12px; background: var(--primary); color: var(--on-primary); box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 8px 20px -8px rgba(30,15,5,.45); }
+.share-btn.done { border-color: var(--leaf); color: var(--leaf); }
+
+/* 토글(보기·업체·필터): 유리 알약, 고르면 잉크 */
+.tab, .vtab, .fopt, .fchip, .fbtn { border-radius: 9999px; }
+.tab { color: var(--ink-2); }
+.tab[aria-pressed="true"], .fopt[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); box-shadow: 0 6px 16px -8px rgba(30,15,5,.5); }
+.vtab[aria-pressed="true"] { background: var(--glass-strong); border-color: var(--primary); color: var(--ink); }
+.vtab { padding: 0 14px 0 6px; }
+.vtab.all { padding: 0 14px; }
+.vtab .vlogo { border-radius: 9999px; }
+.fbtn b { background: var(--primary); color: var(--on-primary); }
+.sortbar select { border-radius: 12px; }
+.fpanel { border-radius: 16px; }
+
+/* 원두 카드: 유리 Card · 스페셜은 코랄 광택 테두리 */
+.coffee { border-radius: 20px; }
+.coffee.is-hot { border: 1px solid transparent;
+  background: linear-gradient(var(--glass-strong), var(--glass-strong)) padding-box,
+              linear-gradient(140deg, #ec5a24, #fcab79 45%, #aa2d00) border-box;
+  box-shadow: var(--glass-hi), 0 14px 36px -12px rgba(200,70,10,.45); }
+.flag.special { color: #fff; background: linear-gradient(140deg, #ec5a24, #aa2d00); padding: 3px 10px 3px 8px; border-radius: 9999px; box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.flag.special::before { background: #fcab79; }
+.flag.stamp { color: var(--leaf); }
+.flag.attr { border-color: var(--rule); border-radius: 9999px; background: var(--glass-sub); }
+.producer { font: 500 24px/1.2 var(--f-display); letter-spacing: -0.01em; }
+.producer.long { font-size: 20px; }
+@media (min-width: 720px) { .producer { font-size: 26px; } .producer.long { font-size: 22px; } }
+.price b { font: 600 20px/1.1 var(--f-body); }
+
+/* 맛 노트: 계열별 시그니처 색 Badge (TTCC 맛 노트와 같은 모양) */
+.notes li { border-radius: 9999px; padding: 7px 12px; color: var(--sig-ink); background: rgba(245,233,212,.9); border: 1px solid rgba(255,255,255,.55); box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
+.notes li[data-f] { background: color-mix(in srgb, var(--fc) 90%, transparent); }
+.notes li[data-f]::before { display: none; }
+.legend span::before { background: var(--fc); box-shadow: 0 0 0 1px rgba(28,23,18,.15); }
+
+/* 알림 줄 · 안내 */
+.note { border-radius: 16px; color: var(--ink); background: linear-gradient(140deg, rgba(168,216,196,.85), rgba(168,216,196,.6)); }
+.note.warn { color: var(--sig-ink); background: linear-gradient(140deg, rgba(244,211,94,.9), rgba(244,211,94,.65)); }
+@media (prefers-color-scheme: dark) { .note { color: var(--sig-ink); } }
+.memo { border-top: 0; padding: 24px 20px; border-radius: 20px; }
+.memo a.tg-link { border-radius: 12px; color: var(--primary); }
+.copybox textarea { border-radius: 12px; }
+.tip { background: var(--primary); color: var(--on-primary); border-radius: 10px; }
+.tip::after { border-top-color: var(--primary); }
+.skip { background: var(--primary); color: var(--on-primary); border-radius: 12px; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass: rgba(255,250,245,.94); --glass-strong: rgba(255,250,245,.97); --glass-sub: rgba(255,255,255,.75); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass: #fbf4ee; --glass-strong: #fbf4ee; --glass-sub: #ffffff; }
+  .top, .coffee, .fpanel, .memo, .note, .tab, .vtab, .fbtn, .fopt, .fchip, .ghost, .btn, .sortbar select, .copybox textarea, .memo a.tg-link { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: dark) {
+  :root { --glass: #2a1a11; --glass-strong: #2a1a11; --glass-sub: #332116; }
+}
 </style>
 </head>
 <body>
