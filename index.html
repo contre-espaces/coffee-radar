@@ -57,7 +57,7 @@ button, a, select, summary, [role="button"] { touch-action: manipulation; }   /*
 button { font-family: inherit; }
 
 .wrap {
-  max-width: 980px; margin: 0 auto;
+  max-width: 752px; margin: 0 auto;   /* PC도 휴대폰처럼 한 줄 피드 — 읽기 좋은 폭(본문 약 720px) */
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 20px 48px;
@@ -89,13 +89,7 @@ h1 .mark { flex: none; width: 0.9em; height: 0.9em; color: var(--leaf); }   /* �
 .tab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
 
 .list { display: grid; gap: 12px; margin-top: 12px; }
-@media (min-width: 720px) {
-  .list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  /* 나란히 놓인 두 카드: 내용·가격·상세정보 3칸을 함께 써서 높이와 가격 줄 위치가 같게 (상세정보를 펼쳐도 옆 카드 가격 줄은 그대로) */
-  .list > .coffee { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
-  .list > .coffee > .c-buy { align-self: start; }
-  @supports not (grid-template-rows: subgrid) { .list > .coffee { display: flex; } .list .c-main { flex: 1 0 auto; } }
-}
+@media (min-width: 720px) { .list { gap: 16px; } }
 .c-main { display: flex; flex-direction: column; min-width: 0; }
 .empty { margin: 0; color: var(--ink-2); font-size: 15px; padding: 8px 0; }
 
