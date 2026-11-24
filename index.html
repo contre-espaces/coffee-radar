@@ -247,11 +247,13 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .coffee.focus { outline: 2px solid var(--leaf); outline-offset: 2px; }
 .coffee.stale { opacity: .6; }
 .buy-act { display: flex; align-items: center; gap: 8px; margin-left: auto; }   /* 가격 줄 오른쪽: 공유 · 주문 (좁으면 다음 줄 오른쪽) */
-.c-buy .share-btn, .c-buy .ttcc-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
-.ttcc-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap; }
-/* 멤버 기기: 버튼이 3개라 가격 아래 한 줄을 꽉 채워 좌우 끝을 카드와 맞춤 */
-.buy-act.ttcc { flex: 1 0 100%; margin-left: 0; display: grid; grid-template-columns: 1fr 1fr 1.35fr; }
-.buy-act.ttcc > * { width: 100%; justify-content: center; padding: 0 8px; }
+.c-buy .share-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
+/* 멤버 기기: TTCC 담기는 상세정보 줄 오른쪽 글자 링크 — 가격·공유·주문 줄은 그대로 */
+details.more > summary::after { order: 1; }
+.ttcc-link { order: 2; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 2px; color: var(--primary); font-weight: 500; text-decoration: none; }
+.ttcc-link::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #aa2d00; }
+.ttcc-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (prefers-color-scheme: dark) { .ttcc-link::before { background: #fcab79; } }
 .share-btn { position: relative; }
 .share-btn.done { border-color: var(--leaf); color: var(--leaf); }
 @media (hover: hover) {
@@ -728,10 +730,10 @@ h1 .mark { color: var(--leaf); }
       </div>
       <div class="c-buy">
         <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
-        <div class="buy-act share${TTCC ? ' ttcc' : ''}">${TTCC && /^https:\/\//i.test(it.url || '') ? `<a class="ghost ttcc-btn" href="https://ttcc.inbeom.com/#add=${encodeURIComponent(it.url)}" target="_blank" rel="noopener" aria-label="TTCC에 담기">+ TTCC</a>` : ''}<button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span class="ext" aria-hidden="true"></span></a></div>
+        <div class="buy-act share"><button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span class="ext" aria-hidden="true"></span></a></div>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
-        <summary>상세정보</summary>
+        <summary>상세정보${TTCC && /^https:\/\//i.test(it.url || '') ? `<a class="ttcc-link" href="https://ttcc.inbeom.com/#add=${encodeURIComponent(it.url)}" target="_blank" rel="noopener">TTCC에 담기</a>` : ''}</summary>
         <div class="more-body">
           ${spec.length ? `<dl class="spec">${spec.map(([a, x]) => `<div><dt>${a}</dt><dd>${x}</dd></div>`).join('')}</dl>` : ''}
           <div class="txtbox" data-t="${k}">${textBlocks(it)}</div>
