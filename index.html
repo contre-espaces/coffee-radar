@@ -247,7 +247,8 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 .coffee.focus { outline: 2px solid var(--leaf); outline-offset: 2px; }
 .coffee.stale { opacity: .6; }
 .buy-act { display: flex; align-items: center; gap: 8px; margin-left: auto; }   /* 가격 줄 오른쪽: 공유 · 주문 (좁으면 다음 줄 오른쪽) */
-.c-buy .share-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
+.c-buy .share-btn, .c-buy .ttcc-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
+.ttcc-btn { display: inline-flex; align-items: center; text-decoration: none; white-space: nowrap; }
 .share-btn { position: relative; }
 .share-btn.done { border-color: var(--leaf); color: var(--leaf); }
 @media (hover: hover) {
@@ -464,6 +465,10 @@ h1 .mark { color: var(--leaf); }
     set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
   };
   const PAGE = 24;   // 한 번에 그리는 카드 수 (나머지는 '더 보기')
+  // TTCC 멤버 기기 표시: ttcc.inbeom.com의 '레이더에서 원두 고르기'(#ttcc)로 한 번 들어오면 카드에 'TTCC에 담기'가 보임.
+  // 보이기만 바꿀 뿐 — 실제 담기는 TTCC 서버가 멤버 키로 확인함
+  if (location.hash === '#ttcc') { store.set('ttcc', 1); try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) {} }
+  const TTCC = store.get('ttcc') === 1;
   const S = { data: null, fromCache: false, loading: false, error: null, filter: 'all', vendor: 'all', sort: 'new', limit: PAGE,
     texts: null, textState: 'idle', textSeq: 0,   // 가공 과정·제품 설명은 목록 다음에 따로 받음 (part=text)
     open: new Set(), orig: new Set(), facts: new Set(), focus: null, focusDone: false,
@@ -720,7 +725,7 @@ h1 .mark { color: var(--leaf); }
       </div>
       <div class="c-buy">
         <div class="price">${s ? `<div class="p-line"><b>${esc(mainPrice(s, it.currency))}</b>${s.label ? `<span class="size">${esc(s.label)}</span>` : ''}${origPrice(s, it.currency) ? `<span class="orig">${esc(origPrice(s, it.currency))}</span>` : ''}</div>` : ''}${unit ? `<span class="unit">${esc(unit)}</span>` : ''}</div>
-        <div class="buy-act share"><button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span class="ext" aria-hidden="true"></span></a></div>
+        <div class="buy-act share">${TTCC && /^https:\/\//i.test(it.url || '') ? `<a class="ghost ttcc-btn" href="https://ttcc.inbeom.com/#add=${encodeURIComponent(it.url)}" target="_blank" rel="noopener" aria-label="TTCC에 담기">+ TTCC</a>` : ''}<button type="button" class="ghost share-btn" data-share="${k}" aria-label="공유하기">공유</button><a class="order" href="${esc(it.url)}" target="_blank" rel="noopener">주문 <span class="ext" aria-hidden="true"></span></a></div>
       </div>
       <details class="more" data-h="${k}"${S.open.has(it.key) ? ' open' : ''}>
         <summary>상세정보</summary>
