@@ -576,7 +576,8 @@ h1 .mark { color: var(--leaf); }
     if (!u || gramsOf(u.basis) === 100) return '';   // 기준 용량이 100g이면 가격 줄과 같아서 생략
     return '100g당 ' + (it.currency === 'KRW' ? money(u.krw, 'KRW') : u.krw > 0 ? '≈₩' + num(u.krw, 0) : money(u.price, it.currency));
   };
-  const vendors = () => (S.data && S.data.vendors) || [];
+  const vOrder = (v) => (v.id === 'sey' ? '' : String(v.short || v.name || v.id).toLowerCase());   // SEY 맨 앞, 나머지는 칩 이름 ABC 순
+  const vendors = () => ((S.data && S.data.vendors) || []).slice().sort((a, b) => vOrder(a).localeCompare(vOrder(b), 'en'));
   const vendorOf = (id) => vendors().find((v) => v.id === id) || { id, short: id.toUpperCase(), name: id };
   const nameOf = (it) => [it.producer, it.farm].filter(Boolean).join(' · ');
   const timeFmt = new Intl.DateTimeFormat('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
