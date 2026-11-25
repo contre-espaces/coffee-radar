@@ -484,7 +484,7 @@ h1 .mark { color: var(--leaf); }
     <section class="m-block">
       <h2 id="rTitle">지켜보는 로스터리</h2>
       <ul class="roasters" id="roasters" translate="no"><li>불러오는 중…</li></ul>
-      <p id="rScope">필터용 싱글 오리진만 보여줘요.<br>블렌드, 에스프레소용, 세트, 구독 상품은 뺐어요.</p>
+      <p id="rScope">· 필터용 싱글 오리진만 보여줘요.<br>· 블렌드, 에스프레소용, 세트, 구독 상품은 뺐어요.</p>
     </section>
     <section class="m-block">
       <h2>데이터 안내</h2>
@@ -868,7 +868,7 @@ h1 .mark { color: var(--leaf); }
     if (!vs.length) return;
     $('#rTitle').textContent = `지켜보는 로스터리 ${vs.length}곳`;
     $('#roasters').innerHTML = vs.slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'en', { sensitivity: 'base' })).map((v) => `<li>${/^https:\/\//i.test(v.site || '') ? `<a href="${esc(v.site)}" target="_blank" rel="noopener">${esc(v.name)}</a>` : esc(v.name)}</li>`).join('');
-    $('#rScope').innerHTML = '필터용 싱글 오리진만 보여줘요.<br>블렌드, 에스프레소용, 세트, 구독 상품은 뺐어요.';
+    $('#rScope').innerHTML = '· 필터용 싱글 오리진만 보여줘요.<br>· 블렌드, 에스프레소용, 세트, 구독 상품은 뺐어요.';
     const by = {};
     vs.forEach((v) => { if (v.every > 0) (by[v.every] = by[v.every] || []).push(v); });
     const ks = Object.keys(by).map(Number).sort((a, b) => a - b);
