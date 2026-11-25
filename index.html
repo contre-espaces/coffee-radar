@@ -432,12 +432,6 @@ h1 .mark { color: var(--leaf); }
   .c-buy .buy-act { flex: none; }
 }
 .price .unit span { white-space: nowrap; }
-
-/* 한글 줄바꿈: 낱말 중간에서 끊지 않고(keep-all), 마지막 줄에 한 낱말만 남지 않게(pretty) */
-body { word-break: keep-all; overflow-wrap: break-word; }
-p, li, dd, dt, .cap, .unit, .statusline, .empty, .tr-note { text-wrap: pretty; }
-h1, h2, h3, .producer { text-wrap: balance; }
-.nmp { display: inline-block; max-width: 100%; }   /* 긴 원두 이름은 ' · ' 자리에서 줄바꿈 */
 </style>
 </head>
 <body>
@@ -471,18 +465,18 @@ h1, h2, h3, .producer { text-wrap: balance; }
       <h2>보는 법</h2>
       <dl class="glos">
         <dt>스페셜</dt><dd>SEY COFFEE는 250g 미만 소포장이거나 250g에 ₩48,000 이상, 나머지 로스터리는 100g에 ₩40,000 이상인 원두예요.</dd>
-        <dt>NEW</dt><dd>올라온 지 7일이 안 된 원두예요.<br>올린 날짜를 밝히지 않는 곳은 레이더가 처음 찾은 날로 셉니다.</dd>
-        <dt>컵 노트 색</dt><dd>비슷한 맛은 같은 색이에요. <span class="legend"><span data-f="berry">베리·붉은 과일</span><span data-f="citrus">시트러스</span><span data-f="fruit">과일</span><span data-f="floral">꽃</span><span data-f="sweet">단맛·초콜릿·견과</span><span data-f="other">차·와인·향신료 등</span></span></dd>
-        <dt>가격</dt><dd>한국으로 주문할 때 가격이고 배송비는 빠져 있어요.<br>외화로 파는 곳은 원화로 바꾼 금액(≈₩)을 크게,<br>현지 가격을 아래에 적어요.</dd>
-        <dt>100g당 가격</dt><dd>250g에 가장 가까운 용량으로 계산해요.<br>8oz는 227g으로 쳐요.</dd>
-        <dt>산지·품종·가공</dt><dd>로스터리마다 쓰는 법이 달라서<br>한 방식으로 고쳐 적어요.<br>산지는 나라부터 작은 지역 순서,<br>품종은 영어 표준 이름,<br>가공은 기본 가공 다음에 발효 방식이에요.<br>원래 표기는 상세정보에 있어요.</dd>
-        <dt>설명 번역</dt><dd>가공 과정과 제품 설명은 구글 번역이에요.<br>어색하면 상세정보의 '원문 보기'를 눌러 보세요.</dd>
+        <dt>NEW</dt><dd>올라온 지 7일이 안 된 원두예요. 올린 날짜를 밝히지 않는 곳은 레이더가 처음 찾은 날로 셉니다.</dd>
+        <dt>컵 노트</dt><dd>비슷한 노트는 같은 색 <span class="legend"><span data-f="berry">베리·붉은 과일</span><span data-f="citrus">시트러스</span><span data-f="fruit">과일</span><span data-f="floral">꽃</span><span data-f="sweet">단맛·초콜릿·견과</span><span data-f="other">차·와인·향신료 등</span></span></dd>
+        <dt>가격</dt><dd>배송비를 뺀 원화(≈₩) 가격이에요.</dd>
+        <dt>100g당 가격</dt><dd>250g에 가장 가까운 용량으로 계산해요.</dd>
+        <dt>산지·품종·가공</dt><dd>로스터리마다 다른 표기를 한 방식으로 맞췄어요.</dd>
+        <dt>설명 번역</dt><dd>구글 번역이라 어색하면 원문을 보세요.</dd>
         <dt>품절</dt><dd>목록 맨 뒤에 모아 둬요.</dd>
       </dl>
     </section>
     <section class="m-block">
       <h2>새 원두 알림 받기</h2>
-      <p>새 원두가 올라오면 텔레그램 봇이 메시지를 보내요.<br>봇 대화창에서 '시작'을 누르면 받고,<br>/stop을 보내면 그만 받아요.</p>
+      <p>봇에서 '시작'을 누르면 새 원두 알림이 와요.</p>
       <a class="tg-link" href="https://t.me/tastingwirebot" target="_blank" rel="noopener">@tastingwirebot 열기 <span class="ext" aria-hidden="true"></span></a>
       <p>X와 Threads 계정에도 같은 소식이 올라가요.</p>
       <p class="sns-links"><a href="https://x.com/tastingwire" target="_blank" rel="noopener">X @tastingwire<span class="ext" aria-hidden="true"></span></a><a href="https://www.threads.com/@tastingwire" target="_blank" rel="noopener">Threads @tastingwire<span class="ext" aria-hidden="true"></span></a></p>
@@ -495,9 +489,9 @@ h1, h2, h3, .producer { text-wrap: balance; }
     <section class="m-block">
       <h2>데이터 안내</h2>
       <ul>
-        <li id="dEvery">로스터리 공식 스토어를<br>정해진 간격으로 확인해요.</li>
-        <li id="dFx">외화 가격은 유럽중앙은행(ECB) 환율로<br>원화(≈₩)로 바꿔요.</li>
-        <li>번역은 구글 번역이에요.<br>원문은 하루에 한 번 다시 보고,<br>바뀌었으면 다시 옮겨요.</li>
+        <li id="dEvery">로스터리 공식 스토어를 주기적으로 확인해요.</li>
+        <li id="dFx">외화 가격은 ECB 환율로 바꿔요.</li>
+        <li>원문이 바뀌면 설명을 다시 번역해요.</li>
       </ul>
     </section>
   </footer>
@@ -774,7 +768,7 @@ h1, h2, h3, .producer { text-wrap: balance; }
         <span class="vbadge">${logoHTML(v)}<span class="vname" translate="no">${esc(v.name)}</span></span>
         ${flags.length ? `<div class="flags">${flags.join('')}</div>` : ''}
       </div>
-      <h2 class="producer${String(it.producer || '').length > 28 ? ' long' : ''}" translate="no">${String(it.producer || '').split(/\s+·\s+/).reduce((o, x) => { if (o.length && x.length <= 4) o[o.length - 1] += ' · ' + x; else o.push(x); return o; }, []).map((x, i, a) => `<span class="nmp">${esc(x)}${i < a.length - 1 ? ' ·' : ''}</span>`).join(' ')}</h2>
+      <h2 class="producer${String(it.producer || '').length > 28 ? ' long' : ''}" translate="no">${esc(it.producer)}</h2>
       ${it.farm ? `<p class="farm" translate="no">${esc(it.farm)}</p>` : ''}
       ${it.notes && it.notes.length ? `<ul class="notes" aria-label="컵 노트">${it.notes.map((n) => `<li data-f="${noteFamily(n)}">${esc(n)}</li>`).join('')}</ul>` : ''}
       ${facts.length ? `<dl class="facts">${facts.map(([a, x]) => { const f = it.key + '|' + a, on = S.facts.has(f);
@@ -880,10 +874,10 @@ h1, h2, h3, .producer { text-wrap: balance; }
     const ks = Object.keys(by).map(Number).sort((a, b) => a - b);
     if (ks.length) {
       const parts = ks.length === 1 ? [`${ks[0]}분`] : ks.map((k, i) => (i === ks.length - 1 ? `나머지 ${by[k].length}곳 ${k}분` : `${by[k].map((v) => v.name).join('·')} ${k}분`));
-      $('#dEvery').innerHTML = '로스터리 공식 스토어를<br>' + esc(parts.join(', ')) + ' 간격으로 확인해요.';
+      $('#dEvery').textContent = ks.length === 1 ? `${ks[0]}분마다 공식 스토어를 확인해요.` : '공식 스토어를 ' + parts.join(', ') + ' 간격으로 확인해요.';
     }
     const fx = S.data && S.data.config && S.data.config.fx;
-    if (fx && fx.src) $('#dFx').innerHTML = `외화 가격은 ${esc(fx.src === 'ECB' ? '유럽중앙은행(ECB)' : fx.src)}${fx.date ? ` ${esc(fxDay(fx.date))} 기준` : ''} 환율로<br>원화(≈₩)로 바꿔요.`;
+    if (fx && fx.src) $('#dFx').textContent = `외화 가격은 ${fx.src}${fx.date ? ` ${fxDay(fx.date)}` : ''} 환율로 바꿔요.`;
   }
   function applyFocus() {
     if (!S.focus || S.focusDone || !S.data || S.fromCache) return;
