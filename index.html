@@ -224,7 +224,7 @@ details.orig > summary { list-style: none; cursor: pointer; display: inline-flex
 #beans:focus { outline: none; }   /* 건너뛰기 도착점: 칸 전체 테두리 대신 다음 Tab부터 표시 */   /* 한 줄 칩이 화면보다 길어도 페이지는 넓어지지 않게 */
 @media (min-width: 720px) {
   .vtabs { flex-wrap: wrap; overflow: visible; }
-  .vtabs.clamp { max-height: 82px; overflow: hidden; }   /* PC: 업체 칩은 두 줄까지, 나머지는 '모두 보기'로 — 원두 목록이 첫 화면에 보이게 */
+  .vtabs.clamp > .vcut { display: none; }   /* PC: 업체 칩은 두 줄까지, 나머지는 '모두 보기'로 — 원두 목록이 첫 화면에 보이게 */
 }
 .vmore { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; min-height: 36px; padding: 0 4px; border: 0; background: none; font: 500 14px/1 var(--f-body); color: var(--ink-2); cursor: pointer; }
 .vmore::after { content: ""; width: 14px; height: 14px; background: currentColor; -webkit-mask: var(--chev) center / 14px no-repeat; mask: var(--chev) center / 14px no-repeat; transition: transform .16s var(--ease); }
@@ -843,7 +843,10 @@ h1 .mark { color: var(--leaf); }
     vt.classList.remove('clamp');
     const wide = matchMedia('(min-width: 720px)').matches;
     const chips = [...vt.children], top0 = chips.length ? chips[0].offsetTop : 0;
-    const hidden = wide && !vt.hidden ? chips.filter((c) => c.offsetTop - top0 > 50) : [];
+    const rowH = chips.length ? chips[0].offsetHeight + 8 : 1;   // 칩 높이 + 줄 간격
+    chips.forEach((c) => c.classList.remove('vcut'));
+    const hidden = wide && !vt.hidden ? chips.filter((c) => Math.round((c.offsetTop - top0) / rowH) >= 2) : [];   // 셋째 줄부터는 칩째로 숨김 (반쯤 잘려 보이지 않게)
+    hidden.forEach((c) => c.classList.add('vcut'));
     if (!hidden.length) { btn.hidden = true; return; }
     if (S.vSeen !== S.vendor && hidden.some((c) => c.getAttribute('aria-pressed') === 'true')) S.vOpen = true;   // 새로 고른 업체만 (접기를 누르면 접힘)
     S.vSeen = S.vendor;
